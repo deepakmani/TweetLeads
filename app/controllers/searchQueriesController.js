@@ -115,7 +115,7 @@ module.exports = function(db) {
 				// 							timeout 	: 200 * 1000 // Lots of headroom
 				// });
 
-		}
+		},
 
 		// getTweetsForSearchQuery
 
@@ -123,11 +123,6 @@ module.exports = function(db) {
 
 		// Output:  (TweetSearchQuery inner join tweets)  left outer join tweet actions
 
-
-
-
-   
-	}, // SearchQueriesController; 
 
 	getTweetsBySearchQuery: function(req, res) {
 		let screen_name = req.screen_name;
@@ -145,5 +140,10 @@ module.exports = function(db) {
 			    // We don't need spread here, since only the results will be returned for select queries
 			 })
 	} 
+
+   
+	} // SearchQueriesController; 
+
+	
     return SearchQueriesController; 
 };
