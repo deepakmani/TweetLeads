@@ -31,7 +31,7 @@
     "passport-local": "~1.0.0",
     "pg": "^7.4.1",
     "pg-hstore": "^2.3.2",
-    "mysql": "latest",
+    "mysql2": "latest",
     "prerender-node": "^2.8.0",
     "q": "^1.5.1",
     "reflect-metadata": "^0.1.3",
