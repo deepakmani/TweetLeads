@@ -127,7 +127,7 @@ function concat_search_keywords(user) {
 	.then(function(search_queries) {
 
 		search_queries.forEach(function(search_query, index) {
-			if (!search_query.keyword.match(/sales/)) return;
+			if (search_query.keyword.match(/sales/)) return;
 
 			concated_keywords = search_query.keyword + "," + concated_keywords;
 		

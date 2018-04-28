@@ -1,2 +1,2 @@
 web: node server.js
-worker: node twitter_streams.js
+worker: node app/worker/twitter_streams.js
