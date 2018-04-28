@@ -1,0 +1,40 @@
+<section id="add_miracle">
+	<div class="modal-header">
+		<h3 class="modal-title">Add New Miracle</h3>
+	</div>
+	<br/>
+	<div>
+		<form class="form" data-ng-submit="addMiracle()">
+			<label style="display:inline-block; margin-left:70px"> Name: <br/>
+			 	<input type="text" data-ng-model="miracle.name" placeholder="Enter your Name" class="form-control" name="Name" required autofocus on-focus minlength=3 />
+			</label>
+			<label style="display:inline-block; margin-left:70px"> Location: <br/>
+			 	<input type="text" data-ng-model="miracle.location" placeholder="Enter your location" class="form-control" name="location" required autofocus on-focus minlength=2 />
+			</label>
+			<br/>
+			<br/>
+			<label style="display:inline-block; margin-left:70px"> Title: <br/>
+			 	<input type="text" style="width:300px" data-ng-model="miracle.title" placeholder="Enter the Title" class="form-control" name="title" required autofocus on-focus minlength=3/>
+			</label>
+			<label style="display:inline-block; margin-left:30px"> Category: <br/>
+			 	<select data-ng-model="miracle.category" class="form-control"> 
+			 		<option>Health</option>
+			 		<option>Wealth</option>
+			 		<option>Relationship</option>
+			 		<option>Child Birth</option>
+			 		<option>Education</option>
+			 		<option>Career</option>
+			 		<option>Other</option>
+			 	</select>
+			</label>
+			<br/>
+			<br/>
+			<label style="display:inline-block; margin-left:70px"> Description: <br/>
+			  	<textarea style="height:200px; width:600px" data-ng-model="miracle.desc" name="miracle_content" class="form-control" required ng-minlength=0> </textarea>
+			</label>
+			<br/>
+			<br/>
+	    	<input style="margin-left:70px;color:#FFF" type="submit" class="btn btn-primary" id="add_miracle" value="Add Miracle"/>
+	   	</form>
+	</div>
+</section>

@@ -1,0 +1,21 @@
+export class SearchQuery {
+	constructor(
+					// Required
+					public keyword: 	string,
+					public screen_name: string,
+					category: 			string,
+					type: 				string,
+
+					// Not required
+					locations?: 		string[],
+					exclude_retweets?: 	boolean,
+					exclude_media?: 	boolean,
+					exclude_links?: 	boolean,
+					exclude_bots?:		boolean,
+					exclude_keywords?: 	string[],
+					auto_tweet?: 		string,
+					auto_tweet_template_name: string,
+			);
+
+
+}

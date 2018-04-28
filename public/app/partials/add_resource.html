@@ -1,0 +1,28 @@
+<section id="add_resource">
+	<div class="modal-header">
+		<h3 class="modal-title">Add New Resource</h3>
+	</div>
+	<br/>
+	<div>
+		<form class="form" data-ng-submit="addResource()">
+			<label style="display:inline-block; margin-left:70px"> Title: <br/>
+			 	<input type="text" style="width:300px" data-ng-model="resource.title" placeholder="Enter the Title" class="form-control" name="title" required autofocus on-focus minlength=3/>
+			</label>
+			<label style="display:inline-block; margin-left:30px"> Topic: <br/>
+			 	<select data-ng-model="resource.topic" class="form-control"> 
+			 		<option>Greatness of India</option>
+			 		<option>Knowledge</option>
+			 		<option>Other</option>
+			 	</select>
+			</label>
+			<br/>
+			<br/>
+			<label style="display:inline-block; margin-left:70px"> Description: <br/>
+			  	<textarea style="height:200px; width:600px" data-ng-model="resource.desc" name="resource_content" class="form-control" required ng-minlength=0> </textarea>
+			</label>
+			<br/>
+			<br/>
+	    	<input style="margin-left:70px;color:#FFF" type="submit" class="btn btn-primary" id="add_resource" value="Add Resource"/>
+	   	</form>
+	</div>
+</section>

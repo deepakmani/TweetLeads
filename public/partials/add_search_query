@@ -1,0 +1,16 @@
+<section id="Add_Query">
+	<label>
+		<span class="add-search-query-form-label"> Name  </span>
+		<input ng-model="linkedin.name" class="form-control" placeholder="Mark Zuckerberg"> </input>
+	</label>
+	
+</section>
+
+<style>
+.add-query-form-label {
+		font-size: 			14px;
+		font-weight:		600;
+		color: 			#2F4050;
+		//color: 				#FFF;
+	}
+</style>

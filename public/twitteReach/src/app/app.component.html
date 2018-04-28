@@ -1,0 +1,24 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="demo-layout-transparent mdl-layout mdl-js-layout">
+    <header class="mdl-layout__header mdl-layout__header--transparent">
+      <div class="mdl-layout__header-row" id="nav-bar">
+
+        <!-- Title -->
+        <span class="mdl-layout-title">TwitteReach</span>
+
+        <!-- Add spacer, to align navigation to the right -->
+        <div class="mdl-layout-spacer"></div>
+
+        <!-- Navigation with router directives-->
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" [routerLink]="['/']">Home</a>
+          <a class="mdl-navigation__link" [routerLink]="['/twitter_streams']">Twitter Streams</a>
+        </nav>
+        Nemam Amma Bhagavan Sharanam
+      </div>
+    </header>
+  </div>
+
+  <!-- Router Outlet -->
+  <router-outlet></router-outlet>
+

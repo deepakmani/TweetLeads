@@ -1,0 +1,16 @@
+// Twitter Search Streams Route and Component
+@Component({
+   template: `
+  		<!-- SearchQueryComponent -->
+    	<div class="row">
+				<div class="col-md-12">
+					<div class="col-md-4">
+						 
+         	 		</div>
+         	 	</div>
+        </div> 	 
+
+        <!-- AddSearchQueryComponent -->
+
+
+        `

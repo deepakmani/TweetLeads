@@ -1,0 +1,105 @@
+<section id="Add_Search_Query">
+
+	<h2>
+		Add New Search Stream
+	</h2>	
+
+	<form>
+
+		
+		<label class="add-search-query-form-label">
+			<span> Keyword  </span>
+			<br/>
+			<input required type=text ng-model="new_search_query.keyword" class="form-control" placeholder="email marketing"> </input>
+		</label>
+		<label class="add-search-query-form-label">
+			<span class="add-search-query-form-label"> Category  </span>
+			<br/>
+			<input required type=text ng-model="new_search_query.category" class="form-control" placeholder="email marketing"> </input>
+		</label>
+		<label class="add-search-query-form-label">
+			<span > Type  </span>
+			<br/>
+			<span> Tweets </span>
+   			<input type="radio" ng-model="new_search_query.type" value="Tweets">
+			 <span style="margin-left:20px"> Followers </span>
+   			<input type="radio" ng-model="new_search_query.type" value="Followers">
+			 
+		</label>
+		<br/>
+
+		<label class="add-search-query-form-label">
+			<span> Exclude Keywords  </span>
+			<br/>
+			<input  ng-model="new_search_query.exclude_keyword" class="form-control" placeholder="email marketing"> </input>
+<!-- 			<button class="btn btn-primary" ng-click="add_exclude_keyword"> <i class="fa-plus fa"> </i> </button> -->
+		</label>
+
+		<label class="add-search-query-form-label">
+
+			<span>  Exclude  </span>
+			<br/>
+
+			<span> Retweets </span> <input type="checkbox" ng-model="new_search_query.exclude_retweets">
+     		
+     		<span class="add-search-query-form-label" style="margin-left:20px"> Links  </span>
+			<input type="checkbox" ng-model="new_search_query.exclude_links">
+
+			<span class="add-search-query-form-label" style="margin-left:20px">  Media  </span>
+			<input type="checkbox" ng-model="new_search_query.exclude_media">
+		</label>	
+		
+		<br/>
+		<label class="add-search-query-form-label">
+
+			<span>  Auto Tweet  </span>
+			<br/>
+
+			<span> Enable </span> <input type="checkbox" ng-model="new_search_query.enable_auto_tweet">
+     		
+     		<span class="add-search-query-form-label" style="margin-left:20px"> Template Name  </span>
+     	</label>
+
+	<button class="btn btn-success" ng-click="generate_search_queries()"> Generate </button>
+	</form>
+
+	<br/>
+	<br/>
+
+	<table id="add-search-query-table" ng-show="new_search_queries.length > 0">
+		
+		<tr ng-repeat="query in new_search_queries">
+			<td> 
+					{{query.keyword}}   
+
+			</td>
+			<td>
+					<span ng-show="query.added"> 
+						<button class="btn btn-success"> Added </button> 
+					</span>
+					<span ng-show="!query.added"> 
+						<button class="btn btn-success" ng-click="add_search_queries(query)"> Add Search Query </button> 
+					</span>
+
+			</li>
+		</ul>
+	</div>
+
+</section>
+
+<style>
+.add-search-query-form-label {
+		font-size: 			14px;
+		font-weight:		600;
+		color: 			#2F4050;
+		//color: 				#FFF;
+		display:		inline-block;
+	}
+	.add-search-query-form-label input[text] {
+		width: 			300px;
+	}
+#add-search-query-table td {
+		padding: 		20px;
+
+}	
+</style>

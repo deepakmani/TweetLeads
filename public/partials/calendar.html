@@ -1,0 +1,42 @@
+<div ui-calendar="uiConfig.calendar" style="margin-left:100px; margin-right:100px; font-size:16px" calendar='calendar' class="desc calendar span8" ng-model="eventSources"> </div>
+
+<section id="directives-calendar"   class="ng-scope" style="margin-left:100px" data-ng-show="currentUser">
+	<br/>
+	<label style="display:inline-block;font-weight:400"> Event Title <br/> 
+		<input placeholder="Enter a title" style="width:200px;height:32px" type="text" name="title" data-ng-model="newEventTitle" class="form-control">
+		</input>
+	</label>
+
+	<label style="display:inline-block; margin-left:30px;font-weight:400"> Start Date <br/>
+		<input placeholder="Click to Select" ui-date style="width:100px;height:32px;" type="text" name="start" data-ng-model="newEventStart" class="form-control">
+		</input>
+	</label>
+
+	<label style="display:inline-block; margin-left:5px;font-weight:400">  <br/>
+	  <select data-ng-model="start_time_select" style="margin-top:-22px" class="form-control col-lg-12" ng-options="start_time for start_time in start_times"></select>	
+	</label>
+
+	<label style="display:inline-block; margin-left:30px;font-weight:400"> End Date <br/>
+		<input ui-date  placeholder="Click to Select" style="width:100px;height:32px" type="text" name="end" data-ng-model="newEventEnd" class="form-control">
+		</input>
+	</label>
+
+	<label style="display:inline-block; margin-left:5px;font-weight:400"> <br/>
+	  <select data-ng-model="end_time_select" style="margin-top:-22px;"  class="form-control col-lg-12" ng-options="end_time for end_time in end_times"></select>	
+	</label>
+	<button class="btn btn-primary" data-ng-click="addEvent()" style="margin-left:20px;padding:4px"> Add Event </button>
+
+	<br/>
+
+	<br/>
+	<label style="display:inline-block;font-weight:400"> Event Title <br/>
+		<input placeholder="Click on an event" type="text" style="width:200px;height:32px" name="deleteEvent" data-ng-model="deleteEventTitle" class="form-control">
+	</label>
+	<label style="display:inline-block; margin-left:32px;font-weight:400"> Event Id <br/>
+		<input placeholder="Automatically Filled" style="width:100px;height:32px" type="text" name="deleteEventId" data-ng-click="deleteEvent()" data-ng-model="deleteEventId" class="form-control">
+		</input>
+	</label>
+	<button class="btn btn-danger" data-ng-click="deleteEvent()" style="margin-left:20px;padding:4px"> Delete Event </button>
+
+</section>
+

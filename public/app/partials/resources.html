@@ -1,0 +1,44 @@
+<div flash-alert="success" active-class="in alert" class="fade">
+	<span class="alert-message"> {{ flash.message }} </span>
+</div>
+
+<div id="resource_controls" data-ng-show="currentUser">
+	<ul>
+		<li class="btn btn-primary" data-ng-click="addResource()"> Add Resource </li>
+		<li class="btn btn-danger" data-ng-click="deleteResource()"> Delete Resource </li>
+		<li class="btn btn-warning"> Edit Resource </li>
+		
+	</ul>
+</div>
+
+<br/>
+<div id="resources" class="resource_desc">
+ 	<select ng-model="topic_select"  class="form-control" ng-options="topic for topic in topics" style="float:right; width:150px"></select>
+ 	<br/>
+ 	<br/>
+	<div ng-repeat="resource in resources track by resource._id" ng-class-odd="'resource_odd'" ng-class-even="'resource_even'"> 
+		<h3 class="resource_title"> 
+			<span style="font-size:12px"> 
+				<input data-ng-show="currentUser" type="checkbox" ng-model="resource.isSelected" style="margin-left: -20px; åmargin-right:5px" /> 
+			</span>
+
+			{{ resource.title}}
+
+			<span class="resource_topic"> {{ resource.topic }} </span>  
+		</h3>
+		<span class="resource_date"> {{ resource.date  * 1000 | date:'MMM d, HH:mm' }} </span> 
+
+		<br/> 
+		<br/>
+
+		{{ resource.desc }} 
+
+		<span style="font-size: 12px">  </span>  <span class="resource_name">    {{ resource.name }}  </span> 
+
+
+	</div> <!-- miracles repeater -->
+
+	<pagination style="background:#FFF; margin-left:20%" total-items="totalItems" class="pagination" boundary-links="true" rotate="true" items-per-page="itemsPerPage" num-pages="numPages" ng-model="currentPage" ng-change="pageChanged()"></pagination>
+
+
+</div>

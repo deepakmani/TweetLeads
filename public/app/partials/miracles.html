@@ -1,0 +1,44 @@
+<div flash-alert="success" active-class="in alert" class="fade">
+	<span class="alert-message"> {{ flash.message }} </span>
+</div>
+
+<div id="miracle_controls" data-ng-show="currentUser">
+	<ul>
+		<li class="btn btn-primary" data-ng-click="addMiracle()"> Add Miracle </li>
+		<li class="btn btn-danger" data-ng-click="deleteMiracle()"> Delete Miracle </li>
+		<li class="btn btn-warning"> Edit Miracle </li>
+		
+	</ul>
+</div>
+
+<br/>
+<div id="miracles" class="miracle_desc">
+ 	<select ng-model="category_select"  class="form-control" ng-options="category for category in categories" style="float:right; width:150px"></select>
+ 	<br/>
+ 	<br/>
+	<div ng-repeat="miracle in miracles track by miracle._id" ng-class-odd="'miracle_odd'" ng-class-even="'miracle_even'"> 
+		<h3 class="miracle_title"> 
+			<span style="font-size:12px"> 
+				<input data-ng-show="currentUser" type="checkbox" ng-model="miracle.isSelected" style="margin-left: -20px; åmargin-right:5px" /> 
+			</span>
+
+			{{ miracle.title}}
+
+			<span class="miracle_category"> {{ miracle.category }} </span>  
+		</h3>
+		<span class="miracle_date"> {{ miracle.date  * 1000 | date:'MMM d, HH:mm' }} </span> 
+
+		<br/> 
+		<br/>
+
+		{{ miracle.desc }} 
+
+		<span style="font-size: 12px">  </span>  <span class="miracle_name">    {{ miracle.name }}  </span> 
+
+
+	</div> <!-- miracles repeater -->
+
+	<pagination style="background:#FFF; margin-left:20%" total-items="totalItems" class="pagination" boundary-links="true" rotate="true" items-per-page="itemsPerPage" num-pages="numPages" ng-model="currentPage" ng-change="pageChanged()"></pagination>
+
+
+</div>
