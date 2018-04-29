@@ -5,7 +5,6 @@ var CONSUMER_KEY 	= "2i9EW8WkyIEr7ZwR9oO4KZWUU";
 var CONSUMER_SECRET = "V95tZ7T6Ed3Q1LnokwrxSSir7vKzR7RtQKgsmSjKYFHCccyC9s";
 var twitter_clients = {};
 var fetching_twitter_client = {};
-console.log("Nemam Amma Bhagavan Sharanam -- inside twitter streams -- db", db);
 // Setup Twitter Search Streams for all the queries
 db.User.findAll()
 	.then(function(users) {
@@ -19,14 +18,10 @@ db.User.findAll()
 
 function start_twitter_stream(user) {
 	
-
-	console.log("Nemam Amma Bhagavan Sharanam -- concat keywords for", user);
-
 	concat_search_keywords(user)
 	.then(function(concated_keywords) {
 
 	// 1. Collect twitter client for user or create new client
-					console.log("Nemam Amma Bhagavan Sharanam concated keywords", concated_keywords)
 
 		return get_twitter_client(user.screen_name, concated_keywords)
 	})
