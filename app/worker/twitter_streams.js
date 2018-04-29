@@ -5,7 +5,7 @@ var CONSUMER_KEY 	= "2i9EW8WkyIEr7ZwR9oO4KZWUU";
 var CONSUMER_SECRET = "V95tZ7T6Ed3Q1LnokwrxSSir7vKzR7RtQKgsmSjKYFHCccyC9s";
 var twitter_clients = {};
 var fetching_twitter_client = {};
-
+console.log("Nemam Amma Bhagavan Sharanam -- inside twitter streams");
 // Setup Twitter Search Streams for all the queries
 db.User.findAll()
 	.then(function(users) {

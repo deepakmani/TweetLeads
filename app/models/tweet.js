@@ -27,10 +27,6 @@ module.exports = (sequelize, Sequelize) => {
     in_reply_to_status_id:{
       type:   Sequelize.STRING
     },
-    // link_click, profile visit, favorite
-    engagements: {
-      type:  Sequelize.ARRAY(Sequelize.STRING)
-    },
      createdAt: {
       allowNull: false,
       type: Sequelize.DATE,
@@ -43,13 +39,16 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.DATE,
 //      defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
 
+    },
+    retweeted_status_id: {
+      type:   Sequelize.STRING
     }
   },{
 
     classMethods: {
       associate: function(models) {
         Tweet.belongsToMany(models.SearchQuery, {
-         through: models.TweetSearchQuery,
+         through:     models.TweetSearchQuery,
          foreignKey: 'status_id'
        });
         Tweet.belongsToMany(models.User, {

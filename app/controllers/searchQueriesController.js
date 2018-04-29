@@ -66,7 +66,7 @@ module.exports = function(db) {
  								// "SELECT \"SearchQueries\".category, \"SearchQueries\".keyword, \"SearchQueries\".screen_name, \"SearchQueries\".type,  query_tweet_table.tweet_count as \"tweet_count\" \
  								// FROM \( SELECT \"SearchQueries\".keyword, Count\(status_id\) as \"tweet_count\" FROM \"SearchQueries\" LEFT OUTER JOIN \"TweetSearchQueries\" ON \"SearchQueries\".keyword = \"TweetSearchQueries\".keyword \
   							//     GROUP BY \"SearchQueries\".keyword \) as query_tweet_table"
-  							    "SELECT * FROM \"SearchQueries\" INNER JOIN ( SELECT \"SearchQueries\".keyword, Count(status_id) as \"tweet_count\" FROM \"SearchQueries\" LEFT OUTER JOIN \"TweetSearchQueries\" ON \"SearchQueries\".keyword = \"TweetSearchQueries\".keyword   WHERE \"SearchQueries\".screen_name ='DeepakABS'    GROUP BY \"SearchQueries\".keyword ) as query_tweet_table ON \"SearchQueries\".keyword = query_tweet_table.keyword;\
+  							    "SELECT * FROM \"SearchQueries\" INNER JOIN ( SELECT \"SearchQueries\".keyword, Count(status_id) as \"tweet_count\" FROM \"SearchQueries\" LEFT OUTER JOIN \"TweetSearchQueries\" ON \"SearchQueries\".keyword = \"TweetSearchQueries\".keyword   WHERE \"SearchQueries\".screen_name ='DeepakABS'    GROUP BY \"SearchQueries\".keyword ) as query_tweet_table ON \"SearchQueries\".keyword = query_tweet_table.keyword ORDER BY query_tweet_table.tweet_count DESC;\
   							    "
  							  , { type: db.sequelize.QueryTypes.SELECT})
  

@@ -102,9 +102,9 @@ export class TwitterStreamsComponent implements OnInit  {
                   this.search_queries.forEach((search_query, index) => {
                     console.log("Nemam Amma Bhagavan Sharanam -- current_category", search_query.category, " prev category", prev_search_query_category, " index", index);
                     if (search_query.category == "") return;
-                    
+                      
                     // Move to next category
-                    if ((search_query.category != prev_search_query_category) || index == 0) {
+                    if ((search_query.category == prev_search_query_category) || index == 0) {
                     
                       // Create new array
                       let search_queries: SearchQuery[] = [];

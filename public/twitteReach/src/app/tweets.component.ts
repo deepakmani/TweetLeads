@@ -21,6 +21,13 @@ import { Observable } from 'rxjs/Observable';
     	`
     })
 export class TweetsComponent {
-	 @Input() selected_search_query: 			SearchQuery;	
+	 public search_query: 	SearchQuery;	
+	
+	 // Detect input change
+	 @Input()
+  			set selected_search_query(selected_search_query: SearchQuery) {
+    			this.search_query = selected_search_query;
 
+    	// Invoke service			
+  	}	
 };
