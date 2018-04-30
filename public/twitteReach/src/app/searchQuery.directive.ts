@@ -11,7 +11,7 @@ export class SearchQueryDirective {
     }
 
     @HostListener('mouseleave') onMouseLeave() {
-      this.highlight("#A252", "#FFF");
+      this.highlight(null, "#FFF");
     }
 
     @HostListener('click') onClick() {

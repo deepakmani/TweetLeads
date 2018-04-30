@@ -24,7 +24,7 @@ import { Observable } from 'rxjs/Observable';
                         <td colspan='2' class="search-query-category"> {{ category.name }} </td>
                      
                     </tr>
-                    <tr highlightSearchQuery  (click)="selectSearchQuery(searchQuery)" *ngFor="let search_query of category.search_queries">
+                    <tr highlightSearchQuery  class="search-query-keyword" (click)="selectSearchQuery(searchQuery)" *ngFor="let search_query of category.search_queries">
                       <td> {{ search_query.keyword }} </td>
                       <td> {{ search_query.tweet_count }} </td>
                      </tr>
@@ -104,7 +104,7 @@ export class TwitterStreamsComponent implements OnInit  {
                     if (search_query.category == "") return;
                       
                     // Move to next category
-                    if ((search_query.category == prev_search_query_category) || index == 0) {
+                    if ((search_query.category != prev_search_query_category) || index == 0) {
                     
                       // Create new array
                       let search_queries: SearchQuery[] = [];

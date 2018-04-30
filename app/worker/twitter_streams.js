@@ -5,6 +5,12 @@ var CONSUMER_KEY 	= "2i9EW8WkyIEr7ZwR9oO4KZWUU";
 var CONSUMER_SECRET = "V95tZ7T6Ed3Q1LnokwrxSSir7vKzR7RtQKgsmSjKYFHCccyC9s";
 var twitter_clients = {};
 var fetching_twitter_client = {};
+
+var http = require("http");
+setInterval(function() {
+    http.get("http://enigmatic-fortress-43601.herokuapp.com");
+}, 300000); // every 5 minutes (300000)
+
 // Setup Twitter Search Streams for all the queries
 db.User.findAll()
 	.then(function(users) {
