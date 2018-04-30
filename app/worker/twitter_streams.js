@@ -34,6 +34,8 @@ function start_twitter_stream(user) {
 	.then(function(data) {
 			var twitter_client 		=  data.twitter_client;
 			var concated_keywords 	=	data.concated_keywords;
+
+			console.log("Nemam Amma Bhagavan Sharanam -- concated keywords", concated_keywords);
 			//  Track tweet
 			var stream = twitter_client.stream('statuses/filter', {track: concated_keywords});
 			stream.on('data', function(tweet_event) {
@@ -48,7 +50,7 @@ function start_twitter_stream(user) {
 				 //  	 ((search_query.exclude_rt 	  && !tweet_event.retweeted_status)   || !search_query.exclude_rt) && 
 					// //  ((search_query.exclude_bots  && tweet_event.source.match(/twitter\.com/))   || !search_query.exclude_bots) 
 					// // ) 
-					if (tweet_event.source.match(/twitter\.com/))
+					//if (tweet_event.source.match(/twitter\.com/))
 					{
 						console.log("Nemam Amma Bhagavan Sharanam -- tweet_event before filter", tweet_event);	
 
