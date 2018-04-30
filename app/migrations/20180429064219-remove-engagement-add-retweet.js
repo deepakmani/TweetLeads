@@ -8,6 +8,12 @@ module.exports = {
            .then(function(){
                return queryInterface.addColumn('Tweets', 'retweeted_status_id', Sequelize.STRING, {transaction: t})
             })
+           .then(function(){
+               return queryInterface.removeColumn('Tweets', 'text', {transaction: t})
+            })
+           .then(function(){
+               return queryInterface.addColumn('Tweets', 'text', Sequelize.TEXT, {transaction: t})
+            })
         })
 
   },
@@ -25,6 +31,12 @@ module.exports = {
             return queryInterface.removeColumn('Tweets', "retweeted_status_id", {transaction: t})
            .then(function(){
                return queryInterface.addColumn('Tweets', 'engagements', Sequelize.ARRAY(Sequelize.STRING), {transaction: t})
+            })
+           .then(function(){
+               return queryInterface.removeColumn('Tweets', 'text', {transaction: t})
+            })
+           .then(function(){
+               return queryInterface.addColumn('Tweets', 'text', Sequelize.STRING, {transaction: t})
             })
         })
   }

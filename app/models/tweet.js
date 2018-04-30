@@ -22,7 +22,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING
     },
     text: {
-      type:   Sequelize.STRING
+      type:   Sequelize.TEXT
     },
     in_reply_to_status_id:{
       type:   Sequelize.STRING
