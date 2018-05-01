@@ -135,11 +135,11 @@ function concat_search_keywords(user) {
 		search_queries.forEach(function(search_query, index) {
 			if (search_query.keyword.match(/sales/)) return;
 
-			concated_keywords = search_query.keyword + "," + concated_keywords;
+			concated_keywords = +"(" + search_query.keyword + ") OR " + concated_keywords;
 		
 		});
 		// Remove last comma
-		concated_keywords = concated_keywords.slice(0, concated_keywords.length - 1);
+		concated_keywords = concated_keywords.slice(0, concated_keywords.length - 4);
 		q.resolve(concated_keywords);
 	});
 
