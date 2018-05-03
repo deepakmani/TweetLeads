@@ -23,7 +23,10 @@ module.exports = (sequelize, Sequelize) => {
     plan: {
       type:     Sequelize.STRING
     },
-
+    // Last search using this api key
+    since_id: {
+      type:     Sequelize.STRING
+    },
      createdAt: {
       allowNull: false,
       type: Sequelize.DATE,
