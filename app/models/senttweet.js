@@ -15,6 +15,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
+     keyword: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
     status_id: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -41,13 +45,27 @@ module.exports = (sequelize, Sequelize) => {
     // Can be null if no reply
     replied: {
       type: Sequelize.BOOLEAN
-    }
-
-
+    },
+    
+   
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
+        sentTweet.belongsTo(models.User, { 
+    		foreignKey: 'screen_name',
+		 	onDelete: 'CASCADE'
+   		});
+
+   		sentTweet.belongsTo(models.SearchQuery, { 
+    		foreignKey: 'keyword', scope: { screen_name: { $col: 'SearchQuery.screen_name' }}
+   		});
+
+   	// 	// 0-1 relationship
+   	// 	sentTweet.belongsTo(models.tweetTemplate, { 
+    // 		foreignKey: 'template_name',
+		 	// onDelete: 'CASCADE'
+   	// 	});
       }
     }
   });

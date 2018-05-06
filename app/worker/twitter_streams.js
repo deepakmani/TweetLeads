@@ -43,6 +43,84 @@ setInterval(function() {
 
 
 function search_twitter(user) {
+	get_twitter_client(user.screen_name, "")
+	.then(function(data) {
+		var twitter_client 		=  data.twitter_client;
+		
+		// Loop through each keyword
+		user.search_queries.forEach((search_query, i) => {
+
+			var next_since_id 		= search_query.since_id 		? search_query.since_id : "0";
+			var exclude_retweets 	= search_query.exclude_retweets ? " exclude:retweets" : "";
+			var exclude_links 		= search_query.exclude_links 	? " -filter:links" : "";
+			var exclude_media		= search_query.exclude_media	? " -filter:media" : "";
+
+			var twitter_query 		= search_query.keyword + exclude_retweets + exclude_links + exclude_media;
+			//  Track tweet
+			// var stream = twitter_client.stream('statuses/filter', {track: concated_keywords});
+			// stream.on('data', function(tweet) {
+			twitter_client.get('search/tweets', {q:twitter_query , count: 100, result_type: "recent", since_id: next_since_id}, function(error, data, response) {
+			 	if (error) {
+			 		console.log("Nemam Amma Bhagavan Sharanam -- error", error);
+			 	}
+			 	if (data["statuses"]){
+
+				 	var tweets = data["statuses"];
+				 	
+				 	console.log("Nemam Amma Bhagavan Sharanam -- tweets", tweets)
+					// Loop through each tweet if exists, get the search query and update it
+					if (tweets.length > 0) {
+
+						tweets.forEach((tweet, index) => {
+
+							next_since_id = tweet.id_str > next_since_id ? tweet.id_str : next_since_id;
+							if (search_query.exclude_bots  && !tweet.source.match(/twitter\.com/)) return;
+
+						  	// 3. Filter tweets
+							 // 	if(((search_query.exclude_media && !tweet.entities.media.length > 0) || !search_query.exclude_media) &&
+							 // //  	 ((search_query.exclude_links && !tweet.entities.urls.length > 0)   || !search_query.exclude_links) && 
+							 //  	 ((search_query.exclude_rt 	  && !tweet.retweeted_status)   || !search_query.exclude_rt) && 
+								// //  ((search_query.exclude_bots  && tweet.source.match(/twitter\.com/))   || !search_query.exclude_bots) 
+								// // ) 
+								//if (tweet.source.match(/twitter\.com/))
+								console.log("Nemam Amma Bhagavan Sharanam -- tweet before filter", tweet);	
+
+
+							  		var tweet_stored = {
+							  						screen_name: 			tweet.user.screen_name,
+					   								status_id: 	 			tweet.id_str,
+					    							name: 		 			tweet.user.name,
+												    location: 	 			tweet.user.location,	
+					    							profile_img_url: 		tweet.user.profile_image_url,
+					    							text: 			 		tweet.extended_tweet ? tweet.extended_tweet.full_text : tweet.text,
+					   								in_reply_to_status_id:  tweet.in_reply_to_status_id_str,
+					   								engagements:    		new Array()  // Link Click, Favorited, Opened, Replied
+					   							}
+					   				// 4. Add tweets to db	
+									db.Tweet.create(tweet_stored).then((tweet) => {
+										console.log("Nemam Amma Bhagavan Sharanam -- tweet event afte filter", tweet );
+
+										db.TweetSearchQuery.create({status_id: 	tweet.status_id, 
+																	screen_name: user.screen_name, 
+																	keyword:  	 search_query.keyword 
+																   });
+									});
+						})
+							// Update since_id
+						db.SearchQuery.update({since_id: next_since_id}, {where: {screen_name: user.screen_name, keyword: search_query.keyword}});  
+	              
+					}			
+					
+				
+				} // data.statuses
+
+			}); // client.search
+		}); // Loop through search queries
+  	});	
+}  
+	
+
+function search_twitter_streaming(user) {
 	
 	concat_search_keywords(user)
 	.then(function(concated_keywords) {

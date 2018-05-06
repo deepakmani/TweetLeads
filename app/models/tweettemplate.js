@@ -16,7 +16,7 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       unique: "templateKey"
     },
-    name: {
+    template_name: {
       type: Sequelize.STRING,
       allowNull: false,
       primaryKey: true,
@@ -33,11 +33,18 @@ module.exports = (sequelize, Sequelize) => {
     }
 
 
-
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
+        tweetTemplate.belongsTo(models.User, { 
+    		foreignKey: 'screen_name',
+		 	onDelete: 'CASCADE'
+   		});
+
+   		tweetTemplate.hasMany(models.sentTweet, { 
+    		foreignKey: "template_name", scope: { screen_name: { $col: 'sentTweet.screen_name' }}
+   		});
       }
     }
   });

@@ -51,6 +51,8 @@ module.exports = (sequelize, Sequelize) => {
          through:     models.TweetSearchQuery,
          foreignKey: 'status_id'
        });
+        // Tweets are shared by users
+        // Tweet actions are specific to each user
         Tweet.belongsToMany(models.User, {
          through: models.TweetAction
        });

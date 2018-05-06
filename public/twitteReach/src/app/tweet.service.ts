@@ -1,6 +1,7 @@
 import { Http } from '@angular/http';
 import { Injectable, Inject, OnInit } from '@angular/core';
 import 'rxjs/add/operator/map';
+import { Tweet } from './Tweet';
 import { SearchQuery } from './SearchQuery';
 import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
@@ -12,8 +13,8 @@ export class TweetService {
   // Get list of search queries for current user
   constructor(private http: Http) {}
 
-  get_search_queries():  Observable<SearchQuery[]> {
-  	return this.http.get('/api/getTweets', {params: {screen_name: "DeepakABS"}})
+  get_tweets_by_search_query(search_query: SearchQuery):  Observable<Tweet[]> {
+  	return this.http.get('/api/getTweetsBySearchQuery', {params: {screen_name: "DeepakABS", keyword: search_query.keyword }})
   	.map(response => response.json())
 	// .map((search_query) => new SearchQuery(search_query.keyword, 
  //                                      	search_query.screen_name,

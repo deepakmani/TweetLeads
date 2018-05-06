@@ -24,9 +24,9 @@ import { Observable } from 'rxjs/Observable';
                         <td colspan='2' class="search-query-category"> {{ category.name }} </td>
                      
                     </tr>
-                    <tr highlightSearchQuery  class="search-query-keyword" (click)="selectSearchQuery(searchQuery)" *ngFor="let search_query of category.search_queries">
-                      <td> {{ search_query.keyword }} </td>
-                      <td> {{ search_query.tweet_count }} </td>
+                    <tr highlightSearchQuery  class="search-query-keyword"  *ngFor="let search_query of category.search_queries">
+                      <td (click)="selectSearchQuery(search_query)"> {{ search_query.keyword }} </td>
+                      <td (click)="selectSearchQuery(search_query)"> {{ search_query.tweet_count }} </td>
                      </tr>
                     </tbody>
                </table>
@@ -34,13 +34,14 @@ import { Observable } from 'rxjs/Observable';
          	 		</div>
 
               <!-- AddSearchQueryComponent -->
-            <div class="mdl-cell mdl-cell--8-col">
+
+            <div class="mdl-cell mdl-cell--8-col" *ngIf="show_sub_component == 'add_search_query'; else tweetsTemplate">
                 <add-search-query [search_queries]="search_queries" (added_search_queries) = "added_search_queries($event)" *ngIf="show_sub_component == 'add_search_query'"> </add-search-query>
             </div>
             
-             <div class="mdl-cell mdl-cell--8-col">
-                <tweets [selected_search_query]="selected_search_query" *ngIf="show_sub_component == 'tweets'"> </tweets>
-            </div>
+             <ng-template #tweetsTemplate class="mdl-cell mdl-cell--8-col">
+                <tweets [selected_search_query]="selected_search_query"> </tweets>
+            </ng-template>
        </div> 	 
         
         
@@ -52,12 +53,12 @@ import { Observable } from 'rxjs/Observable';
 
 export class TwitterStreamsComponent implements OnInit  {
 	 
-	private search_queries:SearchQuery[]   = [];
-  private errorMessage:any               = '';
-  private show_add_search_query:boolean  = false;
-  private search_query_by_category:any   = [];
-  private selected_search_query: SearchQuery;
-  private show_sub_component             = "tweets";
+	private search_queries:SearchQuery[]         = [];
+  private errorMessage:any                     = '';
+  private show_add_search_query:boolean        = false;
+  private search_query_by_category:any         = [];
+  private selected_search_query:SearchQuery    = undefined;
+  private show_sub_component                   = "tweets";
 
  constructor(public SearchQueryService: SearchQueryService) { 
    
@@ -98,6 +99,8 @@ export class TwitterStreamsComponent implements OnInit  {
                   this.search_queries = search_queries;
                   let category_index     = -1;
                   let prev_search_query_category: string  = undefined;
+
+                  this.selected_search_query = search_queries.length > 0 ? search_queries[0] : null;
 
                   this.search_queries.forEach((search_query, index) => {
                     console.log("Nemam Amma Bhagavan Sharanam -- current_category", search_query.category, " prev category", prev_search_query_category, " index", index);

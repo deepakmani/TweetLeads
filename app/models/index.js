@@ -31,6 +31,12 @@ if (process.env.DATABASE_URL) {
                         "ssl": true
                   },
                 protocol: 'postgres',
+                pool: {
+                    max: 5,
+                    min: 0,
+                    idle: 20000,
+                    acquire: 20000
+                }
               });
 }
 

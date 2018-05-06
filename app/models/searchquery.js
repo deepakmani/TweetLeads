@@ -43,7 +43,7 @@ module.exports = (sequelize, Sequelize) => {
     enable_auto_tweet: {
       type: Sequelize.STRING
     },
-    auto_tweet_template_name: {
+    template_name: {
       type: Sequelize.STRING 
     },
 	  createdAt: {
@@ -59,6 +59,10 @@ module.exports = (sequelize, Sequelize) => {
 	  //  defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
 
 	  },
+	  // Last search using this api key
+	    since_id: {
+	      type:     Sequelize.STRING
+	    },
 	// }, {
 
  //    classMethods: {
@@ -76,7 +80,7 @@ module.exports = (sequelize, Sequelize) => {
   });
 
   	SearchQuery.associate = function (models) {
-   		SearchQuery.belongsToMany(models.User, { 
+   		SearchQuery.belongsTo(models.User, { 
     		foreignKey: 'screen_name',
 		 	onDelete: 'CASCADE'
    		});
@@ -86,6 +90,7 @@ module.exports = (sequelize, Sequelize) => {
    		SearchQuery.belongsToMany(models.Tweet, { 
     		through: 		models.TweetSearchQuery,
     		foreignKey: 	'keyword', scope: { screen_name: { $col: 'TweetSearchQuery.screen_name' }}
+   			
    		});
 	}
 

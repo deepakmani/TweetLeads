@@ -11,6 +11,8 @@ import { TweetsComponent } from './tweets.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { SearchQueryService } from './searchQuery.service';
+import { TweetService } from './tweet.service';
+
 import { SearchQueryDirective } from './searchQuery.directive';
 
 
@@ -46,7 +48,7 @@ export const appRoutes: Routes = [
       { enableTracing: true } // <-- debugging purposes only
     )
   ],
-  providers: [SearchQueryService],
+  providers: [SearchQueryService, TweetService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

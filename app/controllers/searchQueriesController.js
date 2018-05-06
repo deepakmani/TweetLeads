@@ -125,13 +125,13 @@ module.exports = function(db) {
 
 
 	getTweetsBySearchQuery: function(req, res) {
-		let screen_name = req.screen_name;
-		let keyword 	= req.keyword;
+		let screen_name = req.query.screen_name;
+		let keyword 	= req.query.keyword;
 
 		db.sequelize.query("SELECT * FROM \"Tweets\" INNER JOIN \"TweetSearchQueries\" \
 									ON \"Tweets\".status_id = \"TweetSearchQueries\".status_id \
 									WHERE \"TweetSearchQueries\".keyword =\'" + keyword +
-							 		"\' AND TweetSearchQueries.screen_name=\'" + screen_name + "\';",
+							 		"\' AND \"TweetSearchQueries\".screen_name=\'" + screen_name + "\';",
 			 { type: db.sequelize.QueryTypes.SELECT})
 		 .then(tweets => {
 

@@ -23,10 +23,7 @@ module.exports = (sequelize, Sequelize) => {
     plan: {
       type:     Sequelize.STRING
     },
-    // Last search using this api key
-    since_id: {
-      type:     Sequelize.STRING
-    },
+
      createdAt: {
       allowNull: false,
       type: Sequelize.DATE,
@@ -50,6 +47,15 @@ module.exports = (sequelize, Sequelize) => {
          User.belongsToMany(models.Tweet, {
          through: models.TweetAction
        });
+        User.hasMany(models.tweetTemplate, {
+          foreignKey: 'screen_name',
+          onDelete: 'CASCADE'
+        })
+        User.hasMany(models.sentTweet, {
+          foreignKey: 'screen_name',
+          onDelete: 'CASCADE'
+        })
+         ;
         // associations can be defined here
       }
     }
