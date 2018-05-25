@@ -16,6 +16,10 @@ module.exports = function(app, passport) {
 
 	app.get('/api/getTweetsBySearchQuery', SearchQueriesController.getTweetsBySearchQuery);
 
+	app.post('/api/saveTweetTemplateSearchQuery', SearchQueriesController.saveTweetTemplateSearchQuery);
+
+	app.get('/api/getTweetTemplates', SearchQueriesController.getTweetTemplates);
+
 
 	// create event and send back all events after creation
 	app.post('/api/addEvent', function(req, res) {

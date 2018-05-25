@@ -39,12 +39,12 @@ module.exports = (sequelize, Sequelize) => {
     category: {
       type: Sequelize.STRING
     },
-    // No, auto_tweet, auto_reply
-    enable_auto_tweet: {
+    // tweet, reply
+     auto_tweet_type: {
       type: Sequelize.STRING
     },
-    template_name: {
-      type: Sequelize.STRING 
+    template_names: {
+      type: Sequelize.ARRAY(Sequelize.STRING)
     },
 	  createdAt: {
 	    allowNull: false,

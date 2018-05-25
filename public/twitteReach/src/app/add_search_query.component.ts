@@ -153,7 +153,8 @@ export class AddSearchQueryComponent {
 		     									exclude_links: 	  formModel.exclude_links,	
 		     									exclude_media: 	  formModel.exclude_media, 
 		     									exclude_bots: 	  formModel.exclude_bots,
-		     									added: 			  search_query_added
+		     									added: 			  search_query_added,
+		     									template_names:    []		
 		     								}
 		     	this.new_search_queries.push(search_query);
 		     });		

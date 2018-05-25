@@ -22,6 +22,15 @@ app.use(morgan('dev'));                                         // log every req
 app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());                                     // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+
+app.set('views', __dirname + '/public/twitteReach/dist/');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
 app.use(methodOverride());
 app.use(cookieParser()); 										// read cookies (needed for auth)
 // Configure passport

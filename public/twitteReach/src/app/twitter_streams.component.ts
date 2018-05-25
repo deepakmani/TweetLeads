@@ -29,20 +29,22 @@ import { Observable } from 'rxjs/Observable';
                       <td (click)="selectSearchQuery(search_query)"> {{ search_query.tweet_count }} </td>
                      </tr>
                     </tbody>
-               </table>
+              </table>
                
-         	 		</div>
+         	 	</div>
 
               <!-- AddSearchQueryComponent -->
 
             <div class="mdl-cell mdl-cell--8-col" *ngIf="show_sub_component == 'add_search_query'; else tweetsTemplate">
                 <add-search-query [search_queries]="search_queries" (added_search_queries) = "added_search_queries($event)" *ngIf="show_sub_component == 'add_search_query'"> </add-search-query>
+
             </div>
             
-             <ng-template #tweetsTemplate class="mdl-cell mdl-cell--8-col">
-                <tweets [selected_search_query]="selected_search_query"> </tweets>
+            <ng-template #tweetsTemplate>
+                <tweets [selected_search_query]="selected_search_query" class="mdl-cell mdl-cell--8-col"> </tweets>
             </ng-template>
-       </div> 	 
+       </div> 	
+    </div> 
         
         
         `
@@ -105,7 +107,8 @@ export class TwitterStreamsComponent implements OnInit  {
                   this.search_queries.forEach((search_query, index) => {
                     console.log("Nemam Amma Bhagavan Sharanam -- current_category", search_query.category, " prev category", prev_search_query_category, " index", index);
                     if (search_query.category == "") return;
-                      
+                    if (!search_query.template_names) search_query.template_names = [];
+ 
                     // Move to next category
                     if ((search_query.category != prev_search_query_category) || index == 0) {
                     

@@ -9,21 +9,31 @@ import { SearchQuery } from "./SearchQuery";
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-
+import { UiSwitchModule } from 'ngx-toggle-switch';
+import { AppComponent } from './app.component';
+ 
 
 // Twitter Search Streams Route and Component
 @Component({
    selector: 'tweets',
    template: `
   		<!-- SearchQueryComponent -->
-    	 	<table>
+  			<div class="mdl-button mdl-button--primary auto-tweet-btn" (click)="show_templates = true">
+  				Auto Tweet
+  				<br/>
+  				<ui-switch disabled [(ngModel)]="enable_auto_tweet" size="small" labelOn="ON" labelOff="OFF"></ui-switch>
+  			</div>
+			<br/>
+	   	
+  		   	<templates [search_query]="search_query" (closeTweetTemplates)="close_templates($event)" *ngIf = "show_templates"> </templates>
+    	 	<table class="tweets-table">
     	 		<tbody *ngFor="let tweet of tweets">
     	 			<tr>
     	 				<td> 
     	 					<input type="checkbox"> 
     	 				</td>
     	 				<td> 
-    	 					{{ tweet.profile_img_url }}
+    	 					<img src="{{ tweet.profile_img_url }}" />
     	 				</td> 
     	 				<td> 
     	 					{{ tweet.name }}
@@ -32,9 +42,13 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
     	 					{{ tweet.location }}
     	 				</td> 
     	 			</tr>
-    	 			<tr>
+    	 			<tr class="tweet-text-row">
     	 				<td colspan="4">
     	 					{{ tweet.text }}
+    	 				</td>
+    	 			</tr>
+    	 			<tr >
+    	 				<td colspan="4" class="tweet-stats">
     	 				</td>
     	 			</tr>
     	 		</tbody>
@@ -42,8 +56,9 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
     	`
     })
 export class TweetsComponent {
-	 public search_query: 	SearchQuery;	
-	 public tweets: 		Tweet[];
+	 public search_query: 					SearchQuery;	
+	 public tweets: 						Tweet[];
+	 public show_templates: 				boolean = false;
 
 	 private _search_query: BehaviorSubject<SearchQuery> =  new BehaviorSubject<SearchQuery>(undefined);
 
@@ -72,6 +87,12 @@ export class TweetsComponent {
 			}
 	   })
     }
- 		
+    onChange(auto_tweet) {
+    	this.show_templates = auto_tweet;
+    }
+ 
+ 	close_templates($event) {
+ 		this.show_templates = false;
+ 	}		
   		
 };

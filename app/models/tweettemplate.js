@@ -30,6 +30,9 @@ module.exports = (sequelize, Sequelize) => {
     text: {
     	type: Sequelize.TEXT,
       	allowNull: false  
+    },
+    link: {
+    	type: Sequelize.STRING
     }
 
 

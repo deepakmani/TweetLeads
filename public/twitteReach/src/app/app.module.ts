@@ -8,15 +8,19 @@ import { AppComponent } from './app.component';
 import { TwitterStreamsComponent } from './twitter_streams.component';
 import { AddSearchQueryComponent } from './add_search_query.component';
 import { TweetsComponent } from './tweets.component';
+import { TemplatesComponent } from './templates.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { SearchQueryService } from './searchQuery.service';
 import { TweetService } from './tweet.service';
+import { TweetTemplateService } from './tweetTemplate.service';
 
 import { SearchQueryDirective } from './searchQuery.directive';
 
 
 import { RouterModule, Routes } from '@angular/router';
+
+import { UiSwitchModule } from 'ngx-toggle-switch';
 
 export const appRoutes: Routes = [
   {
@@ -36,19 +40,21 @@ export const appRoutes: Routes = [
     TwitterStreamsComponent,
     AddSearchQueryComponent,
     SearchQueryDirective,
-    TweetsComponent
+    TweetsComponent,
+    TemplatesComponent
   ],
   imports: [
     BrowserModule,
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
+    UiSwitchModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     )
   ],
-  providers: [SearchQueryService, TweetService],
+  providers: [SearchQueryService, TweetService, TweetTemplateService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

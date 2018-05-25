@@ -6,9 +6,17 @@ var CONSUMER_SECRET = "V95tZ7T6Ed3Q1LnokwrxSSir7vKzR7RtQKgsmSjKYFHCccyC9s";
 var twitter_clients = {};
 var fetching_twitter_client = {};
 var since_id;
+var Queue 		= require('bull');
+var url   		= require('url');
 
+
+var redis 		= process.env.REDIS_URL || "redis://h:PqErNcbYz5xs5Wje2lDxoa0Ls6vSQmci@redis-17387.c16.us-east-1-3.ec2.cloud.redislabs.com:17387";
+
+var conn_info 	= url.parse(redis, true /* parse query string */);
 var http = require("http");
-db.User.findAll()
+setInterval(function() {
+
+	db.User.findAll()
 		.then(function(users) {
 
 			users.forEach(function(user, index) {
@@ -22,22 +30,38 @@ db.User.findAll()
 
 				});
 
+				if (!user.tweet_queue) {
+
+					// Setup queues
+					user.tweet_queue 		= Queue(user.screen_name + "TweetQueue",
+											// , conn_info.port
+											// , conn_info.hostname
+											// , {auth_pass: conn_info.auth ? conn_info.auth.replace("h:", "") : ""});
+													redis);
+					
+					
+					// Graceful Shutdown
+					process.once( 'SIGTERM', function ( sig ) {
+					  user.tweet_queue.close().then(function () {
+						   console.log('done')
+					   });
+					});
+
+					// Listen for errors
+					user.tweet_queue.on("error", function(err) {
+						console.log("ABS -- Unable to create bull queue" + err);
+					})
+
+					// Method to call for TweetQueue jobs added by server
+
+					require('./send_tweet.js')(user.tweet_queue, 1);
+				}
 
 			});
 		}, function(err) {
 			//res.json([]);
 	});
-setInterval(function() {
- // Setup Twitter Search Streams for all the queries
-	db.User.findAll()
-		.then(function(users) {
 
-			users.forEach(function(user, index) {
-				search_twitter(user);
-			});
-		}, function(err) {
-			//res.json([]);
-	});
 }, 300000); // every 5 minutes (300000)
 
 
@@ -46,10 +70,12 @@ function search_twitter(user) {
 	get_twitter_client(user.screen_name, "")
 	.then(function(data) {
 		var twitter_client 		=  data.twitter_client;
-		
+		console.log("Nemam Amma Bhagavan Sharanam -- twitter client", twitter_client);
+
 		// Loop through each keyword
 		user.search_queries.forEach((search_query, i) => {
-
+			// temp
+			search_query.exclude_links = true;
 			var next_since_id 		= search_query.since_id 		? search_query.since_id : "0";
 			var exclude_retweets 	= search_query.exclude_retweets ? " exclude:retweets" : "";
 			var exclude_links 		= search_query.exclude_links 	? " -filter:links" : "";
@@ -105,6 +131,22 @@ function search_twitter(user) {
 																	keyword:  	 search_query.keyword 
 																   });
 									});
+							 // Enqueue tweet if auto search
+							 if(search_query.template_names && search_query.template_names.length > 0) {
+   
+							 	var job = user.tweet_queue.add({
+																keyword: 				search_query.keyword,
+ 																type:					search_query.auto_tweet_type,
+																to_screen_name: 		tweet.user.screen_name,
+																in_reply_to_status_id:  tweet.id_str,
+																user: 					user,
+																template_name: 			search_query.template_names[Date.now() % search_query.template_names.length]	
+										},{
+											attempts	: 2,
+											timeout 	: 200 * 1000 // Lots of headroom
+										});
+							 }
+
 						})
 							// Update since_id
 						db.SearchQuery.update({since_id: next_since_id}, {where: {screen_name: user.screen_name, keyword: search_query.keyword}});  

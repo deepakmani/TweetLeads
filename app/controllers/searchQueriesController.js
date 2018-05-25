@@ -92,10 +92,15 @@ module.exports = function(db) {
 
         addNewSearchQueries: function(req, res) {
 	      	// 1. Check if user is signed in
-
+	      	var new_search_queries = [];
 	      	// 2. Collect all search query objects
-	      	var new_search_queries = req.body.new_search_queries;
-	      	console.log("Nemam Amma Bhagavan Sharanam -- req", new_search_queries);
+	      	req.body.new_search_queries.forEach(new_search_query => {
+	      			  // Temp
+	      			 new_search_query.template_names = [];
+	      			 new_search_query.locations = [];
+	      			 new_search_queries.push(new_search_query);
+	      	});
+	      	console.log("Nemam Amma Bhagavan Sharanam", new_search_queries);
 	      	// 3. Insert into db.sequelize 
 	      	db.SearchQuery.bulkCreate(new_search_queries)
 		    .then(added_search_queries => {
@@ -139,11 +144,72 @@ module.exports = function(db) {
 			 	res.json(tweets);
 			    // We don't need spread here, since only the results will be returned for select queries
 			 })
-	} 
+	}, 
 
    
+	
+
+	// Update template in the templates db, if it is not present
+
+	// Update search query
+		saveTweetTemplateSearchQuery: function (req, res) {
+
+			let tweet_template 	= req.body.tweet_template;
+			let	search_query 	= req.body.search_query;
+
+			db.tweetTemplate.upsert(tweet_template, {
+														where: {
+																screen_name: tweet_template.screen_name, 
+																template_name: tweet_template.template_name
+									}})
+			    .then(tweet_template => {
+			    	return db.SearchQuery.find({ 
+			    						  		where: { 
+			    						  				screen_name: 	search_query.screen_name, 
+			    						  				keyword: 		search_query.keyword
+			    						  			}
+			    						  	})
+			    	
+
+				})
+				.then(sq => {
+					 sq.template_names = search_query.template_names;
+
+					return db.SearchQuery.update({
+						template_names: 	sq.template_names,
+						auto_tweet_type: 	search_query.auto_tweet_type
+					}, {where: {
+						screen_name: 	search_query.screen_name, 
+			    		keyword: 		search_query.keyword
+			    						
+					}})
+				})
+				.then(search_query => {
+
+			    		res.json(true);
+			    	})
+				.catch(err => {
+					res.json(false);
+				});
+
+
+		},
+
+		getTweetTemplates: function (req, res) {
+			let screen_name = req.query.screen_name;
+
+			db.sequelize.query("SELECT * FROM \"tweetTemplates\" \
+								WHERE screen_name ='" + screen_name +"'", 
+			{ type: db.sequelize.QueryTypes.SELECT})
+	 		.then(tweet_templates => {	
+
+	 			res.json(tweet_templates);
+	 		});	
+
+			
+		}	
+
 	} // SearchQueriesController; 
 
-	
     return SearchQueriesController; 
 };
