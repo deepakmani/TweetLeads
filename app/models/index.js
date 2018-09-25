@@ -32,7 +32,7 @@ if (process.env.DATABASE_URL) {
                   },
                 protocol: 'postgres',
                 pool: {
-                    max: 5,
+                    max: 105,
                     min: 0,
                     idle: 20000,
                     acquire: 20000
@@ -54,6 +54,8 @@ fs
   .forEach(file => {
     var model = sequelize['import'](path.join(__dirname, file));
     db[model.name] = model;
+    console.log("Nemam Amma Bhagavan Sharanam -- model", model, " file: ", file);
+
   });
 
 Object.keys(db).forEach(modelName => {

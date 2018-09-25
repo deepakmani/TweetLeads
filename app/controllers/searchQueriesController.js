@@ -129,21 +129,48 @@ module.exports = function(db) {
 		// Output:  (TweetSearchQuery inner join tweets)  left outer join tweet actions
 
 
-	getTweetsBySearchQuery: function(req, res) {
+	getTweetCountBySearchQuery: function(req, res) {
 		let screen_name = req.query.screen_name;
 		let keyword 	= req.query.keyword;
+		let promises 	= [];
 
-		db.sequelize.query("SELECT * FROM \"Tweets\" INNER JOIN \"TweetSearchQueries\" \
-									ON \"Tweets\".status_id = \"TweetSearchQueries\".status_id \
+		promises.push(db.sequelize.query("SELECT Count(status_id) as tweet_count FROM \"TweetSearchQueries\" \
 									WHERE \"TweetSearchQueries\".keyword =\'" + keyword +
-							 		"\' AND \"TweetSearchQueries\".screen_name=\'" + screen_name + "\';",
-			 { type: db.sequelize.QueryTypes.SELECT})
-		 .then(tweets => {
+							 		"\' AND \"TweetSearchQueries\".screen_name=\'" + screen_name + "\'\
+							 		\
+							 		AND NOT EXISTS (SELECT 1 FROM \"TweetActions\" WHERE \"TweetSearchQueries\".status_id = \"TweetActions\".status_id \
+							 		ORDER BY \"Tweets\".createdAt ;",
+			 { type: db.sequelize.QueryTypes.SELECT}));
 
+		promises.push(db.sequelize.query("SELECT \"TweetActionTypes\".type as type, Count(status_id) as tweet_count\
+										FROM TweetActionTypes LEFT OUTER JOIN (\"TweetActions\" INNER JOIN \"TweetSearchQueries\" Using(status_id)) \
+										WHERE \"TweetSearchQueries\".keyword =\'" + keyword + 
+										"\' AND \"TweetSearchQueries\".screen_name=\'" + screen_name + "\')\
+										GROUP BY \"TweetActionTypes\".type \
+										ORDER BY \"TweetActionTypes\".type", 
+						{ type: db.sequelize.QueryTypes.SELECT}));;
+		Promise.all(promises.map(p => p.catch(e => e)))
+		  .then(results => {
+		 		let new_tweets = [];
 			 	console.log('Nemam Amma Bhagavan Sharanam -- tweets', tweets);
-			 	res.json(tweets);
+			 	if (!results[0].match(/Error/)) {
+			 		// New tweets
+			 		new_tweets_count = results[0].tweet_count;
+			 	}
+			 	
+			 	if (!results[1].match(/Error/)) {
+			 		results[1].forEach(val, i => {
+			 			switch(val.type) {
+			 				case 'Contacted': 	contacted_count = val.tweet_count; break;
+			 				case 'Replied': 	replied_count 	= val.tweet_count; break;
+			 				case 'Followed': 	followed_count  = val.tweet_count; break;
+			 				case 'Saved': 		saved_count 	= val.tweet_count; break;
+			 			}
+			 		});	
+			 	}
+			 	res.json({new: new_tweets_count, contacted: contacted_count, replied: replied_count, followed: followed_count,  saved: saved_count });
 			    // We don't need spread here, since only the results will be returned for select queries
-			 })
+			 });
 	}, 
 
    

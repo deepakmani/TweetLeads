@@ -1,8 +1,8 @@
 var db 				= require("../models/index.js");
 var Twitter 		= require('twitter');
 var Q 				= require('q');
-var CONSUMER_KEY 	= "2i9EW8WkyIEr7ZwR9oO4KZWUU";
-var CONSUMER_SECRET = "V95tZ7T6Ed3Q1LnokwrxSSir7vKzR7RtQKgsmSjKYFHCccyC9s";
+var CONSUMER_KEY 	= "0CATYOWT4xuugZNXZ1rDVXwBM";
+var CONSUMER_SECRET = "mzG2At2kbbOPwdXRP4dhqZjqolghouVPGWjR6iI3E82HOeTEcg";
 var twitter_clients = {};
 var fetching_twitter_client = {};
 var since_id;
@@ -10,8 +10,7 @@ var Queue 		= require('bull');
 var url   		= require('url');
 
 
-var redis 		= process.env.REDIS_URL || "redis://h:PqErNcbYz5xs5Wje2lDxoa0Ls6vSQmci@redis-17387.c16.us-east-1-3.ec2.cloud.redislabs.com:17387";
-
+var redis 		= process.env.REDIS_URL || "redis://h:p1f8cb43296a78a9438a4b604d41a7a070094f416d8fbf3de3e248e7b66461c28@ec2-54-86-200-206.compute-1.amazonaws.com:11399";
 var conn_info 	= url.parse(redis, true /* parse query string */);
 var http = require("http");
 setInterval(function() {
@@ -38,7 +37,7 @@ setInterval(function() {
 											// , conn_info.hostname
 											// , {auth_pass: conn_info.auth ? conn_info.auth.replace("h:", "") : ""});
 													redis);
-					
+
 					
 					// Graceful Shutdown
 					process.once( 'SIGTERM', function ( sig ) {
@@ -85,7 +84,8 @@ function search_twitter(user) {
 			//  Track tweet
 			// var stream = twitter_client.stream('statuses/filter', {track: concated_keywords});
 			// stream.on('data', function(tweet) {
-			twitter_client.get('search/tweets', {q:twitter_query , count: 100, result_type: "recent", since_id: next_since_id}, function(error, data, response) {
+			if (twitter_query.match(/premium/)) {
+				twitter_client.get('search/tweets', {q:twitter_query , count: 100, result_type: "recent", since_id: next_since_id, tweet_mode: 'extended'}, function(error, data, response) {
 			 	if (error) {
 			 		console.log("Nemam Amma Bhagavan Sharanam -- error", error);
 			 	}
@@ -113,15 +113,16 @@ function search_twitter(user) {
 
 
 							  		var tweet_stored = {
-							  						screen_name: 			tweet.user.screen_name,
-					   								status_id: 	 			tweet.id_str,
-					    							name: 		 			tweet.user.name,
-												    location: 	 			tweet.user.location,	
-					    							profile_img_url: 		tweet.user.profile_image_url,
-					    							text: 			 		tweet.extended_tweet ? tweet.extended_tweet.full_text : tweet.text,
-					   								in_reply_to_status_id:  tweet.in_reply_to_status_id_str,
-					   								engagements:    		new Array()  // Link Click, Favorited, Opened, Replied
-					   							}
+							  							screen_name: 			tweet.user.screen_name,
+					   									status_id: 	 			tweet.id_str,
+					    								name: 		 			tweet.user.name,
+												    	location: 	 			tweet.user.location,	
+					    								profile_img_url: 		tweet.user.profile_image_url,
+					    								text: 			 		tweet.extended_tweet ? tweet.extended_tweet.full_text : tweet.text,
+					   									in_reply_to_status_id:  tweet.in_reply_to_status_id_str,
+					   									engagements:    		new Array()  // Link Click, Favorited, Opened, Replied
+					   							};
+
 					   				// 4. Add tweets to db	
 									db.Tweet.create(tweet_stored).then((tweet) => {
 										console.log("Nemam Amma Bhagavan Sharanam -- tweet event afte filter", tweet );
@@ -131,11 +132,14 @@ function search_twitter(user) {
 																	keyword:  	 search_query.keyword 
 																   });
 									});
+
+
 							 // Enqueue tweet if auto search
 							 if(search_query.template_names && search_query.template_names.length > 0) {
    
 							 	var job = user.tweet_queue.add({
 																keyword: 				search_query.keyword,
+ 																to_name: 				tweet.user.name,
  																type:					search_query.auto_tweet_type,
 																to_screen_name: 		tweet.user.screen_name,
 																in_reply_to_status_id:  tweet.id_str,
@@ -157,6 +161,7 @@ function search_twitter(user) {
 				} // data.statuses
 
 			}); // client.search
+		}
 		}); // Loop through search queries
   	});	
 }  

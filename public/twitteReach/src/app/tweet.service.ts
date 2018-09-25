@@ -12,10 +12,14 @@ export class TweetService {
 
   // Get list of search queries for current user
   constructor(private http: Http) {}
-
-  get_tweets_by_search_query(search_query: SearchQuery):  Observable<Tweet[]> {
-  	return this.http.get('/api/getTweetsBySearchQuery', {params: {screen_name: "DeepakABS", keyword: search_query.keyword }})
+  getTweetCountBySearchQuery = (keyword) => {
+  	 return this.http.get('/api/getTweetCountBySearchQuery', {params: {screen_name: "DeepakABS", keyword: keyword }})
   	.map(response => response.json())
+  };
+  getTweetsBySearchQueryAndActionType = (keyword: string, action: string) => {
+  	return this.http.get('/api/getTweetsBySearchQueryAndActionType', {params: {screen_name: "DeepakABS", keyword: keyword, action: action }})
+  	.map(response => response.json())
+  }
 	// .map((search_query) => new SearchQuery(search_query.keyword, 
  //                                      	search_query.screen_name,
  //                                      	search_query.category ?  search_query.category : "Default",
@@ -31,5 +35,5 @@ export class TweetService {
 	
 
 
-  	}
+  
   }

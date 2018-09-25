@@ -1,7 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { SearchQuery } from './SearchQuery';
 import { SearchQueryService } from './searchQuery.service';
+import { AddedSearchQueryService } from './AddedSearchQuery.service';
 import { FormControl, FormGroup,  Validators} from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+
+
 @Component({
   selector: 'add-search-query',
    template: `
@@ -96,8 +100,8 @@ import { FormControl, FormGroup,  Validators} from '@angular/forms';
 
                  `
 })
-export class AddSearchQueryComponent {
- @Input() search_queries: 			SearchQuery[];	
+export class AddSearchQueryComponent implements OnInit {
+ public search_queries: 			SearchQuery[] = [];	
  @Output() added_search_queries 	= 			new EventEmitter<SearchQuery[]>();
  search_query: 					SearchQuery = new SearchQuery("Linkedin", "DeepakABS", "Default", "Tweet");
  new_search_queries: 			SearchQuery[] = [];
@@ -114,13 +118,24 @@ export class AddSearchQueryComponent {
    			                	  exclude_bots: new FormControl()
 
   		                    });
- constructor(public SearchQueryService: SearchQueryService) {}
+ constructor(public SearchQueryService: SearchQueryService, public AddedSearchQueryService: AddedSearchQueryService ) {}
+
+  
 	private is_added(keyword): boolean {
 
 		let search_query_added = false;
 		
 		return search_query_added;
 	}	
+
+	ngOnInit(){ 
+		// Collect SearchQueries
+		this.SearchQueryService.get_search_queries()
+		.subscribe((search_queries) => {
+			this.search_queries = search_queries;
+		});
+	}
+
 
  	onSubmit() {
  		this.generate_search_queries();
@@ -183,7 +198,7 @@ export class AddSearchQueryComponent {
                 						val.added = true;
                 					});
                 				}
-                				this.added_search_queries.emit(new_search_queries);
+                				this.AddedSearchQueryService.emit_added_search_query(new_search_queries);
                 			}
                 		},
                 //error => this.errorMessage = <any>error

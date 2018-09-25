@@ -8,7 +8,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     // Can be tweet_reply, tweet, direct message, follow, favorite, read
     action: {
-      type:   Sequelize.ARRAY(Sequelize.STRING)
+      type:   Sequelize.STRING,
+      primaryKey: true,
+      unique: "tweetActionUserIndex"
     },
     status_id: {
      type:   			Sequelize.STRING,

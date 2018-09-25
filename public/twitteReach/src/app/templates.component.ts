@@ -47,7 +47,7 @@ import { FormControl, FormGroup,  Validators} from '@angular/forms';
 			             	<h3> Select Template </h3>
 			            	<hr/>
 
-			            	 <table style="width: 100%">
+			            	 <table style="width: 100%" class="templates-table">
 				                <tbody  *ngFor="let tweet_template_category of tweet_templates_by_category">
 				                   
 				                     <tr>

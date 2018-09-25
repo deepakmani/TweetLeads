@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output} from '@angular/core';
  
 import { TweetService } from "./tweet.service";
+import { SelectedSearchQueryService } from "./SelectedSearchQuery.service";
+
 import { SearchQueryDirective } from "./searchQuery.directive";
 
 import { Tweet } from "./Tweet";
@@ -11,7 +13,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { UiSwitchModule } from 'ngx-toggle-switch';
 import { AppComponent } from './app.component';
- 
+import { ActivatedRoute } from '@angular/router';
+import { MarkTweetAsReadDirective }  from "./directives/markTweetAsRead";
 
 // Twitter Search Streams Route and Component
 @Component({
@@ -27,16 +30,38 @@ import { AppComponent } from './app.component';
 	   	
   		   	<templates [search_query]="search_query" (closeTweetTemplates)="close_templates($event)" *ngIf = "show_templates"> </templates>
     	 	<table class="tweets-table">
+    	 		<tr>
+    	 			<th [ngClass]="(active_tweet_type == 'New') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('New')"> New
+    	 			<br/>
+    	 			{{new_count}}
+    	 			</th>
+    	 			<th [ngClass]="(active_tweet_type == 'Contacted') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Contacted')">
+    	 				Contacted
+    	 				<br/>
+    	 				{{contacted_count}} 
+    	 			</th>
+    	 			<th [ngClass]="(active_tweet_type == 'Replied') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Replied')">
+    	 				Replied
+    	 				<br/>
+    	 				{{replied_count}} 
+    	 			</th>
+    	 			<th [ngClass]="(active_tweet_type == 'Read') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Read')">
+    	 				Read
+    	 				<br/>
+    	 				{{read_count}} 
+    	 			</th>
+    	 		</tr>		
+
+
     	 		<tbody *ngFor="let tweet of tweets">
-    	 			<tr>
+    	 			<tr markTweetAsRead [status_id]="tweet.status_id" (markTweetAsRead)="markTweetAsRead($event)">
     	 				<td> 
-    	 					<input type="checkbox"> 
-    	 				</td>
-    	 				<td> 
-    	 					<img src="{{ tweet.profile_img_url }}" />
+    	 					<input type="checkbox">  <img src="{{ tweet.profile_img_url }}" style="margin-left:10px" />
     	 				</td> 
     	 				<td> 
     	 					{{ tweet.name }}
+    	 					<br/>
+    	 					<span style="font-size:10px"> @{{ tweet.screen_name }} </span>
     	 				</td> 
     	 				<td> 
     	 					{{ tweet.location }}
@@ -54,11 +79,24 @@ import { AppComponent } from './app.component';
     	 		</tbody>
     	 	</table>		
     	`
-    })
+    ,
+ providers: [
+   SelectedSearchQueryService
+  ]
+ })
 export class TweetsComponent {
 	 public search_query: 					SearchQuery;	
 	 public tweets: 						Tweet[];
 	 public show_templates: 				boolean = false;
+	 public active_action: 					string;
+	 public new_count; 
+	 public contacted_count; 
+	 public replied_count; 
+	 public followed_count; 
+	 public favorited_count; 
+	 public saved_count; 
+	 public read_count;
+	 public markTweetsAsRead: 				Array<any>;
 
 	 private _search_query: BehaviorSubject<SearchQuery> =  new BehaviorSubject<SearchQuery>(undefined);
 
@@ -71,21 +109,34 @@ export class TweetsComponent {
 	}
 
  
-   	constructor(public TweetService: TweetService) {}
-
+   	constructor(public TweetService: TweetService, private route: ActivatedRoute) {}
+   	
+   	markTweetAsRead = (status_id) => {
+   		let tweet_action_pkey = {status_id: status_id, screen_name: 'DeepakABS', keyword: this.search_query.keyword};
+   		console.log("Nemam Amma Bhagavan Sharanam -- calling markTweetAsRead");
+   		 this.markTweetsAsRead.push(tweet_action_pkey);
+   	}
     ngOnInit() {
-    	this._search_query.subscribe(search_query => {
-	       if (search_query) 
-	       	{
-	       			this.search_query = search_query;
-				  
-			    	this.TweetService.get_tweets_by_search_query(this.search_query)
-			    	.subscribe((
-			    		tweets => {
-			    			this.tweets = tweets;
-			    	}))
-			}
-	   })
+    	// 1. Set active tweet type to New
+    	this.active_action = "New";
+    	this.route.queryParams
+	      .subscribe(params => {
+	        let keyword  = params.keyword;
+	        // Get tweets for the keyword
+	        this.TweetService.getTweetCountBySearchQuery(keyword)
+	        .subscribe(data => {
+	        	this.new_count		 = data.new_count;
+	        	this.contacted_count = data.contacted_count;
+	        	data.replied_count   = data.replied_count;
+	        });
+
+	       let tweets_req = this.TweetService.getTweetsBySearchQueryAndActionType(keyword, this.active_action)
+	        tweets_req.subscribe(tweets => {
+	        	this.tweets = tweets;
+	        }, 
+	        err => {
+	        })
+	    });
     }
     onChange(auto_tweet) {
     	this.show_templates = auto_tweet;

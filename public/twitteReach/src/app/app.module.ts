@@ -16,6 +16,7 @@ import { TweetService } from './tweet.service';
 import { TweetTemplateService } from './tweetTemplate.service';
 
 import { SearchQueryDirective } from './searchQuery.directive';
+import { MarkTweetAsReadDirective } from './directives/markTweetAsRead';
 
 
 import { RouterModule, Routes } from '@angular/router';
@@ -30,9 +31,20 @@ export const appRoutes: Routes = [
   },
   {
     path: 'twitter_search_streams',
-    component: TwitterStreamsComponent
-  }
+    component: TwitterStreamsComponent,
+    children: [
+                { 
+                  path: 'tweets', 
+                  component: TweetsComponent,
+                },
+                {
+                  path:     'new_twitter_stream',
+                  component: AddSearchQueryComponent
+                }
+               ]
+   }
 ];
+
 
 @NgModule({
   declarations: [
@@ -41,7 +53,8 @@ export const appRoutes: Routes = [
     AddSearchQueryComponent,
     SearchQueryDirective,
     TweetsComponent,
-    TemplatesComponent
+    TemplatesComponent,
+    MarkTweetAsReadDirective
   ],
   imports: [
     BrowserModule,
@@ -53,6 +66,9 @@ export const appRoutes: Routes = [
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     )
+  ],
+  exports: [
+    MarkTweetAsReadDirective
   ],
   providers: [SearchQueryService, TweetService, TweetTemplateService],
   bootstrap: [AppComponent]

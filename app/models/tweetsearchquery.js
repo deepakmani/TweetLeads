@@ -22,19 +22,19 @@ module.exports = (sequelize, Sequelize) => {
        unique:     'tweetSearchQueryIndex',
        primaryKey: true
     },
-     createdAt: {
+    
+    createdAt: {
 	    allowNull: false,
 	    type: Sequelize.DATE,
 	   defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
 
 
-	  },
-	  updatedAt: {
+	},
+	updatedAt: {
 	    allowNull: false,
 	    type: Sequelize.DATE,
 	  //  defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
-
-	  }
+	}
   // }, {
   //   classMethods: {
   //     associate: function(models) {
