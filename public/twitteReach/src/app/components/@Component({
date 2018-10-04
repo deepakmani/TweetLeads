@@ -1,0 +1,6 @@
+@Component({
+		selector: 'send-tweet'
+})
+export class SendTweetComponent {
+	
+}

@@ -1,8 +1,14 @@
 export class Tweet {
-	 constructor() {
-
-	 	profile_img_url: string,
- 
+	 constructor(
+	 	public  	screen_name: string,
+   		public	status_id:  	   string,
+   		public	name:  			   string,
+   		public	location:  		   string
+   		)
+}
+    profile_img_url: {
+      type: Sequelize.STRING
+    },
     text: {
       type:   Sequelize.TEXT
     },
@@ -35,6 +41,7 @@ export class Tweet {
     source: {
       type: Sequelize.STRING
     },
+
       // ASC sort
     has_link: {
       type: Sequelize.BOOLEAN
@@ -46,6 +53,9 @@ export class Tweet {
     // ASC sort
     is_reply: {
       type: Sequelize.BOOLEAN
+    },
+    potential_need_score: {
+      type: Sequelize.INTEGER
     },
     // 1, 2, 3, 4 based on ratio rounded to quartile
     // DESC sort

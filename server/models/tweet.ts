@@ -68,7 +68,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     potential_need_score: {
       type: Sequelize.INTEGER
-    }
+    },
     // 1, 2, 3, 4 based on ratio rounded to quartile
     // DESC sort
     followers_friends_bucket: {

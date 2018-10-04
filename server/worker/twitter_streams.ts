@@ -75,7 +75,10 @@ export class TwitterStreams {
 		// 1. Extract status_id, text, profile_img_url, name, location, created_at, 
 		// screen_name, followers, source, description, profile_url
 
+		var since_id 	   = search_query.since_id;
+
 		let tweets_to_save = tweets.map((tweet) => {
+            since_id =  Number(tweet.id_str) > Number(since_id) ? tweet.id_str : since_id;
 
    			let tweet_to_save = {
 								status_id: 					tweet.id_str,
@@ -109,7 +112,8 @@ export class TwitterStreams {
 			
 			// 3. Request
 			// Need, Decide, Decided, recommend, suggest,       
-			let request_keywords   		= ["need", "tried", "suggest", "suggestion", "recommend", "decide", "decided"];
+			let request_keywords   		= ["need", "tried", "suggest", "suggestion", "recommend", "decide", "decided", "find" \
+										   "finding", "advice", "looking", "searching"];
 			potential_need_keywords  	= potential_need_keywords.concat(request_keywords);
 			// 4. Performance
 			// Good, Great, Easy, Easier, worth, success, working, works, best, bad, tough, terrible, sucks, 
@@ -118,7 +122,7 @@ export class TwitterStreams {
 			potential_need_keywords  	= potential_need_keywords.concat(performance_keywords);
             
             potential_need_keywords.forEach((keyword) => {
-            	tweet_to_save.potential_need_score = tweet.full_text.indexOf(keyword) ? tweet_to_save.potential_need_score + 1 : tweet_to_save.potential_need_score;
+            	tweet_to_save.potential_need_score = tweet.full_text.indexOf(keyword) != -1 ? tweet_to_save.potential_need_score + 1 : tweet_to_save.potential_need_score;
             });
 
             return tweet_to_save;
@@ -131,30 +135,37 @@ export class TwitterStreams {
 		});	
 
 		// Save tweets
-		console.log ("Nemam Amma Bhagavan Sharanam -- tweets_to_save ", tweets_to_save);
 		db.Tweet.bulkCreate(tweets_to_save)
 		.then((saved_tweets) => { 
 			
+			
+		})
+		.catch((err) => {
+			console.log("Nemam Amma Bhagavan Sharanam -- error", err);
+
+		})
+		.finally(() => {
 			// Save tweet search query
 
-			let tweet_actions_to_save = saved_tweets.map((tweet) => {
-				let tweet_action_to_save = {
-													status_id: 		tweet.status_id,
-													keyword:  	 	search_query.keyword,
-													screen_name: 	search_query.screen_name,
-													read: 			false
+			let tweet_actions_to_save = tweets_to_save.map((tweet) => {
+				let tweet_action_to_save = {	
+													status_id: 				tweet.status_id,
+													keyword:  	 			search_query.keyword,
+													screen_name: 			search_query.screen_name,
+													read: 					'false',
+													potential_need_score: 	tweet.potential_need_score
 												}
 				return tweet_action_to_save;								
 			});
-			
+			console.log("Nemam Amma Bhagavan Sharanam -- saving tweet actions", tweet_actions_to_save);
 			db.TweetAction.bulkCreate(tweet_actions_to_save)
 			.then((saved_tweet_actions) => {
-
 				// Update since_id
-				db.SearchQuery.update({since_id: saved_tweets[0].id_str}, {where: {screen_name: search_query.screen_name, keyword: search_query.keyword}});  
+				db.SearchQuery.update({since_id: since_id}, {where: {screen_name: search_query.screen_name, keyword: search_query.keyword}});  
 		    });      
+		})
 
-		});
+
 	}
 
 	public static search_twitter(user, search_query) {

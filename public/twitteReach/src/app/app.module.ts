@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { TwitterStreamsComponent } from './twitter_streams.component';
 import { AddSearchQueryComponent } from './add_search_query.component';
 import { TweetsComponent } from './tweets.component';
+import { SendTweetComponent } from './components/sendTweet.component';
+
 import { TemplatesComponent } from './templates.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
@@ -54,7 +56,8 @@ export const appRoutes: Routes = [
     SearchQueryDirective,
     TweetsComponent,
     TemplatesComponent,
-    MarkTweetAsReadDirective
+    MarkTweetAsReadDirective,
+    SendTweetComponent
   ],
   imports: [
     BrowserModule,

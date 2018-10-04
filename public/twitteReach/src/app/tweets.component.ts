@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output} from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output} from '@angular/core';
  
 import { TweetService } from "./tweet.service";
-import { SelectedSearchQueryService } from "./SelectedSearchQuery.service";
+import { SearchQueryService } from "./searchQuery.service";
 
 import { SearchQueryDirective } from "./searchQuery.directive";
 
@@ -13,6 +13,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { UiSwitchModule } from 'ngx-toggle-switch';
 import { AppComponent } from './app.component';
+import { SendTweetComponent } from './components/sendTweet.component';
+
 import { ActivatedRoute } from '@angular/router';
 import { MarkTweetAsReadDirective }  from "./directives/markTweetAsRead";
 
@@ -31,30 +33,30 @@ import { MarkTweetAsReadDirective }  from "./directives/markTweetAsRead";
   		   	<templates [search_query]="search_query" (closeTweetTemplates)="close_templates($event)" *ngIf = "show_templates"> </templates>
     	 	<table class="tweets-table">
     	 		<tr>
-    	 			<th [ngClass]="(active_tweet_type == 'New') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('New')"> New
+    	 			<th [ngClass]="(active_action == 'New') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('New')"> New
     	 			<br/>
-    	 			{{new_count}}
+    	 			{{tweet_count.new}}
     	 			</th>
-    	 			<th [ngClass]="(active_tweet_type == 'Contacted') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Contacted')">
+    	 			<th [ngClass]="(active_action == 'Contacted') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Contacted')">
     	 				Contacted
     	 				<br/>
-    	 				{{contacted_count}} 
+    	 				{{tweet_count.contacted}} 
     	 			</th>
-    	 			<th [ngClass]="(active_tweet_type == 'Replied') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Replied')">
+    	 			<th [ngClass]="(active_action == 'Replied') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Replied')">
     	 				Replied
     	 				<br/>
-    	 				{{replied_count}} 
+    	 				{{tweet_count.replied}} 
     	 			</th>
-    	 			<th [ngClass]="(active_tweet_type == 'Read') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Read')">
+    	 			<th [ngClass]="(active_action == 'Read') ? 'active-tweet-type':'inactive-tweet-type'" (click)="get_tweets('Read')">
     	 				Read
     	 				<br/>
-    	 				{{read_count}} 
+    	 				{{tweet_count.read}} 
     	 			</th>
     	 		</tr>		
 
 
     	 		<tbody *ngFor="let tweet of tweets">
-    	 			<tr markTweetAsRead [status_id]="tweet.status_id" (markTweetAsRead)="markTweetAsRead($event)">
+    	 			<tr  [status_id]="tweet.status_id" (markTweetAsRead)="markTweetAsRead($event)">
     	 				<td> 
     	 					<input type="checkbox">  <img src="{{ tweet.profile_img_url }}" style="margin-left:10px" />
     	 				</td> 
@@ -66,10 +68,35 @@ import { MarkTweetAsReadDirective }  from "./directives/markTweetAsRead";
     	 				<td> 
     	 					{{ tweet.location }}
     	 				</td> 
+    	 				<td>
+    	 					<button markTweetAsRead class="mdl-button mdl-button--primary mark-as-read-btn"> 
+		 							<input type="checkbox"/> Mark As Read  
+		 					</button>
+    	 				</td>
     	 			</tr>
     	 			<tr class="tweet-text-row">
     	 				<td colspan="4">
     	 					{{ tweet.text }}
+    	 				</td>
+    	 			</tr>
+    	 			<tr> 
+    	 				<td colspan="4">
+
+    	 					<div style="float:right">
+		 						<button  *ngIf="!tweet.show_send_tweet" class="mdl-button mdl-button--primary send-tweet-btn"  (click)="tweet.show_send_tweet = true"> 
+		 							Send Tweet  
+		 						</button>
+
+	    	 					<button  *ngIf="tweet.show_send_tweet" class="mdl-button mdl-button--primary send-tweet-btn"  (click)="tweet.show_send_tweet = false"> 
+		 							Hide Tweet  
+		 						</button>	
+
+		 						<br/>
+		 						<br/>
+
+		 						<send-tweet *ngIf="tweet.show_send_tweet"> </send-tweet>
+		 					</div>
+
     	 				</td>
     	 			</tr>
     	 			<tr >
@@ -81,22 +108,25 @@ import { MarkTweetAsReadDirective }  from "./directives/markTweetAsRead";
     	`
     ,
  providers: [
-   SelectedSearchQueryService
+//   SearchQueryService
   ]
  })
-export class TweetsComponent {
+export class TweetsComponent implements OnDestroy, OnInit  {
 	 public search_query: 					SearchQuery;	
 	 public tweets: 						Tweet[];
 	 public show_templates: 				boolean = false;
 	 public active_action: 					string;
 	 public new_count; 
-	 public contacted_count; 
-	 public replied_count; 
-	 public followed_count; 
-	 public favorited_count; 
-	 public saved_count; 
-	 public read_count;
-	 public markTweetsAsRead: 				Array<any>;
+	 public tweet_count 					= {
+	 											new: 		0,
+	 	                                        contacted: 	0,
+	  								    		replied: 	0,
+	  											follower: 	0,
+	 											read: 		0,				
+	 											saved: 		0
+	 										}
+
+	 public markTweetsAsRead: 				Array<string> = new Array<string>();
 
 	 private _search_query: BehaviorSubject<SearchQuery> =  new BehaviorSubject<SearchQuery>(undefined);
 
@@ -109,34 +139,70 @@ export class TweetsComponent {
 	}
 
  
-   	constructor(public TweetService: TweetService, private route: ActivatedRoute) {}
+   	constructor(public TweetService: TweetService, private route: ActivatedRoute, public SearchQueryService: SearchQueryService) {}
    	
    	markTweetAsRead = (status_id) => {
-   		let tweet_action_pkey = {status_id: status_id, screen_name: 'DeepakABS', keyword: this.search_query.keyword};
    		console.log("Nemam Amma Bhagavan Sharanam -- calling markTweetAsRead");
-   		 this.markTweetsAsRead.push(tweet_action_pkey);
+   		 this.markTweetsAsRead.push(status_id);
+   		 
+   		 // Update twitter streams count
+
    	}
+
+
     ngOnInit() {
     	// 1. Set active tweet type to New
     	this.active_action = "New";
-    	this.route.queryParams
-	      .subscribe(params => {
-	        let keyword  = params.keyword;
+	
+        this.SearchQueryService.selected_search_query
+        .subscribe((selected_search_query) => {
+        	this.search_query = selected_search_query;
+              
 	        // Get tweets for the keyword
-	        this.TweetService.getTweetCountBySearchQuery(keyword)
+	        this.TweetService.getTweetCountBySearchQuery(this.search_query.keyword)
 	        .subscribe(data => {
-	        	this.new_count		 = data.new_count;
-	        	this.contacted_count = data.contacted_count;
-	        	data.replied_count   = data.replied_count;
+	        	this.tweet_count.new		 	= data.new_tweet_count;
+	        	this.tweet_count.contacted 		= data.contacted_tweet_count;
+	        	this.tweet_count.replied  	 	= data.replied_tweet_count;
+	        	this.tweet_count.read 			= data.read_tweet_count;
 	        });
 
-	       let tweets_req = this.TweetService.getTweetsBySearchQueryAndActionType(keyword, this.active_action)
+
+	       let tweets_req = this.TweetService.getTweetsBySearchQueryAndActionType(this.search_query.keyword, this.active_action)
 	        tweets_req.subscribe(tweets => {
-	        	this.tweets = tweets;
+	        	this.tweets = tweets.map((tweet) => {
+	        						tweet.show_send_tweet = false;
+					        		return tweet;
+	        					})
+					        	
 	        }, 
 	        err => {
 	        })
-	    });
+	    })
+
+        // Mark tweets as read when component doesnt get destroyed, but search query changes
+ 	    this.route
+	      .queryParams
+	      .subscribe(queryParams => {	
+	      		if (this.markTweetAsRead.length > 0) {
+	      			this.TweetService.bulkMarkTweetsAsRead("DeepakABS", this.markTweetsAsRead)
+			    	.subscribe((status) => {
+			    		this.markTweetsAsRead = [];
+			    	});
+	      		}
+	      });
+    }
+    ngOnDestroy() {
+    	// Invoke bulk read
+
+    	console.log("Nemam Amma Bhagavan Sharanam -- calling mark tweets read inside ngDestroy");
+    	if (this.markTweetAsRead.length > 0) {
+	    	this.TweetService.bulkMarkTweetsAsRead("DeepakABS", this.markTweetsAsRead)
+	    	.subscribe((status) => {
+	    		this.markTweetsAsRead = [];
+	    	});
+	    }
+
     }
     onChange(auto_tweet) {
     	this.show_templates = auto_tweet;

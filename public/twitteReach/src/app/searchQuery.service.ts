@@ -4,9 +4,12 @@ import 'rxjs/add/operator/map';
 import { SearchQuery } from './SearchQuery';
 import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
 
 @Injectable()
 export class SearchQueryService {
+  selected_search_query = new BehaviorSubject<SearchQuery>(undefined);
 
 
   // Get list of search queries for current user
@@ -32,10 +35,15 @@ export class SearchQueryService {
 
   	}
 
+
+	
   	 add_search_queries(new_search_queries: SearchQuery[]) {
   		return this.http.post('/api/addNewSearchQueries', {new_search_queries: new_search_queries})
   		.map(response => response.json())
   	}
 
+  	emit_selected_search_query(search_query: SearchQuery) {
+		this.selected_search_query.next(search_query);
+	}
   }
  

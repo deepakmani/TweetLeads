@@ -145,6 +145,7 @@ export class TemplatesComponent implements OnInit  {
    			                	  // Required and max 120 characters
    			                	  tweetText: 	new FormControl("", [Validators.required, Validators.maxLength(280)]),
   		                    });
+    
  	constructor(public TweetTemplateService: TweetTemplateService) { 
    
 

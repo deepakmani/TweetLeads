@@ -33,7 +33,9 @@ export class TweetService {
 	//                                     search_query.enable_auto_tweet,
 	// 	                                search_query.tweet_count)
 	
-
+	bulkMarkTweetsAsRead = (screen_name: string, status_ids: Array<string>) => {
+		return this.http.post('/api/bulkMarkTweetsAsRead', {screen_name: "DeepakABS", status_ids: status_ids});
+	}
 
   
   }

@@ -45,7 +45,6 @@ fs
     .forEach(file => {
     var model = db.sequelize['import'](path.join(__dirname, file));
     db[model.name] = model;
-    console.log("Nemam Amma Bhagavan Sharanam -- model", model, " pkey: ", model.primaryKeys);
 });
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {

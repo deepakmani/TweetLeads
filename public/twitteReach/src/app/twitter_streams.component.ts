@@ -27,7 +27,8 @@ import { SelectedSearchQueryService } from './SelectedSearchQuery.service'
                         <td colspan='2' class="search-query-category"> {{ category.name }} </td>
                      
                     </tr>
-                    <tr highlightSearchQuery  [routerLink]="['tweets']"  [queryParams]="{ keyword: search_query.keyword}" class="search-query-keyword"  *ngFor="let search_query of category.search_queries">
+
+                    <tr highlightSearchQuery (click) = "selectSearchQuery(search_query)" [routerLink]="['tweets']"  [queryParams]="{ keyword: search_query.keyword}" class="search-query-keyword"  *ngFor="let search_query of category.search_queries">
                       <td>
                         {{ search_query.keyword }}
                       </td>
@@ -75,6 +76,8 @@ export class TwitterStreamsComponent implements OnInit  {
  }
  selectSearchQuery(searchQuery) {
    this.selected_search_query = searchQuery;
+   this.SearchQueryService.emit_selected_search_query(this.selected_search_query);
+
  }
   ngOnInit(){
        this.AddedSearchQueryService.added_search_query_observable.subscribe(
@@ -111,7 +114,7 @@ export class TwitterStreamsComponent implements OnInit  {
 
                   this.selected_search_query = search_queries.length > 0 ? search_queries[0] : null;
                   
-                  this.SelectedSearchQueryService.emit_selected_search_query(this.selected_search_query);
+                  this.SearchQueryService.emit_selected_search_query(this.selected_search_query);
 
                   this.search_queries.forEach((search_query, index) => {
                     console.log("Nemam Amma Bhagavan Sharanam -- current_category", search_query.category, " prev category", prev_search_query_category, " index", index);

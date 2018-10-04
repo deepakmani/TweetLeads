@@ -16,7 +16,8 @@ export class Tweet {
 					public read?: 		boolean,	
 					public contacted?: 	boolean,
 					public link_click?: boolean,
-					public replied?: boolean
+					public replied?: 	boolean,
+					public show_send_tweet?: 	boolean
 
 			){};
 

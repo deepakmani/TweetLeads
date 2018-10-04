@@ -108,7 +108,7 @@ export class AddSearchQueryComponent implements OnInit {
 
          addSearchQueryForm = new FormGroup ({
    			                	  keyword: 	new FormControl("Linkedin", Validators.required),
-   			                	  type: 	new FormControl("Tweet", Validators.required),
+   			                	  type: 	new FormControl("Tweets", Validators.required),
    			                	  category: new FormControl("Default"),
    			                	  locations: new FormControl(),
    			                	  exclude_keywords: new FormControl(),

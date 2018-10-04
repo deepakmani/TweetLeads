@@ -10,60 +10,29 @@ class TweetsController {
 TweetsController.routes = function (app) {
     app.get("/api/getTweetCountBySearchQuery", this.getTweetCountBySearchQuery);
     app.get("/api/getTweetsBySearchQueryAndActionType", this.getTweetsBySearchQueryAndActionType);
+    app.post("/api/bulkMarkTweetsAsRead", this.bulkMarkTweetsAsRead);
 };
 TweetsController.getTweetCountBySearchQuery = function (req, res) {
     let screen_name = req.query.screen_name;
     let keyword = req.query.keyword;
     let promises = [];
     let actions = ["new", "contacted", "replied", "followed", "favorited", "saved", "read"];
-    promises.push(db.sequelize.query("SELECT Count(status_id) as tweet_count FROM \"TweetActions\" \
+    db.sequelize.query("SELECT  Count(case \"TweetActions\".read when 'false' then 1 else null end) as \"new_tweet_count\", \
+	    							Count(case \"TweetActions\".read when 'true' then 1 else null end) as \"read_tweet_count\" \  FROM \"TweetActions\" \
 									WHERE \"TweetActions\".keyword =\'" + keyword +
         "\' AND \"TweetActions\".screen_name=\'" + screen_name + "\'\
-							 		    AND \"TweetActions\".actions='{}' \
-							 		", { type: db.sequelize.QueryTypes.SELECT }));
-    // actions.forEach((action) => {
-    // 	if (action != "new") {
-    // 		promises.push(db.sequelize.query(" (	SELECT count(status_id) as tweet_count  \
-    // 		 								FROM \"TweetActions\"  \
-    // 		 								WHERE screen_name = '" + screen_name + "' keyword='" + keyword +  
-    // 		 							 	 " '" + action + "'=ANY(actions))", 	
-    // 					{ type: db.sequelize.QueryTypes.SELECT}));
-    // 	}
-    // });
-    Promise.all(promises.map(p => p.catch(e => e)))
-        .then(results => {
-        let new_tweets = [];
-        let new_count, contacted_count, replied_count, followed_count, favorited_count, saved_count, read_count = 0;
-        results.forEach((result, index) => {
-            if (!result.match(/Error/)) {
-                // New tweets
-                switch (index) {
-                    case 0:
-                        new_count = results[0].tweet_count;
-                        break;
-                    case 1:
-                        contacted_count = results[1].tweet_count;
-                        break;
-                    case 2:
-                        replied_count = results[2].tweet_count;
-                        break;
-                    case 3:
-                        followed_count = results[3].tweet_count;
-                        break;
-                    case 4:
-                        favorited_count = results[4].tweet_count;
-                        break;
-                    case 5:
-                        saved_count = results[5].tweet_count;
-                        break;
-                    case 6:
-                        read_count = results[6].tweet_count;
-                        break;
-                }
-            }
-        });
-        res.json({ new_count: new_count, contacted_count: contacted_count, replied_count: replied_count, followed_count: followed_count, saved_count: saved_count, read_count: read_count });
+							 		", { type: db.sequelize.QueryTypes.SELECT })
+        .then((counts) => {
+        console.log("Nemam Amma Bhagavan Sharanam -- counts", counts);
+        res.json({ new_tweet_count: counts.new_tweet_count,
+            // contacted_count: counts.contacted_count, 
+            // replied_count: replied_count, 
+            // followed_count: followed_count, 
+            // saved_count: saved_count, 
+            read_tweet_count: counts.read_tweet_count });
         // We don't need spread here, since only the results will be returned for select queries
+    }, (err) => {
+        res.json(false);
     });
 };
 TweetsController.getTweetsBySearchQueryAndActionType = function (req, res) {
@@ -113,6 +82,27 @@ TweetsController.getTweetsBySearchQueryAndActionType = function (req, res) {
             res.json([]);
         });
     }
+};
+/* @Input: screen_name
+*/
+// Bulk Mark Tweets Read
+TweetsController.bulkMarkTweetsAsRead = function (req, res) {
+    let screen_name = req.body.screen_name;
+    let status_ids = req.body.status_ids;
+    const Op = require('Sequelize').Op;
+    db.TweetAction.update({ read: true }, { where: {
+            screen_name: screen_name,
+            status_id: {
+                [Op.or]: status_ids
+            }
+        }
+    })
+        .then(() => {
+        res.json(true);
+    })
+        .catch(() => {
+        res.json(false);
+    });
 };
 exports.TweetsController = TweetsController;
 class SearchQuery {
