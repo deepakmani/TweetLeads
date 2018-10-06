@@ -1,28 +1,44 @@
 <form [formGroup]="sendTweetForm" (ngSubmit)="onSubmit()">
 	
-		<label style="float-right">
+		<label>
 			Tweet Type
 			<br/>
 			<br/>
 
+			
+			<input type="radio" formControlName="type" value="Reply">
 			<span> Reply </span>
 
-			<input type="radio" formControlName="type" value="Reply">
 			
-			<span style="margin-left:20px"> Mention </span>
-   			
-   			<input type="radio" formControlName="type" value="Mention">
-			 
+   			<input  style="margin-left:20px" type="radio" formControlName="type" value="Mention">
+			<span> Mention </span>
+   			 
   		</label>
   		<br/>
 
-  		<label style="float-right"> 
+  		<label>To:
+  		<br/>
+  			<span style="color:#2AF"> @{{ tweet.screen_name }} </span>
+  		<br/>
+
+  		</label>
+  		
+  		<label> 
   			Tweet 
   			<br/>
-			<textarea  formControlName="tweetText"  name="tweetText" class="mdl-textfield__input" type="text" rows="5s" id="sample5"></textarea>
+			<textarea  formControlName="tweetText"  name="tweetText" class="mdl-textfield__input tweet-text" type="text" rows="5s" id="sample5"></textarea>
 
 
   		</label>
+  		<label style="float-right"> 
+  			Tweet 
+  			<br/>
+			<textarea  formControlName="tweetText"  name="tweetText" class="mdl-textfield__input tweet-text" type="text" rows="5s" id="sample5"></textarea>
+
+
+  		</label>
+
+
 
   		<br/>
 

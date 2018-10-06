@@ -90,19 +90,23 @@ TweetsController.bulkMarkTweetsAsRead = function (req, res) {
     let screen_name = req.body.screen_name;
     let status_ids = req.body.status_ids;
     const Op = require('Sequelize').Op;
-    db.TweetAction.update({ read: true }, { where: {
-            screen_name: screen_name,
-            status_id: {
-                [Op.or]: status_ids
-            }
-        }
-    })
-        .then(() => {
-        res.json(true);
-    })
-        .catch(() => {
-        res.json(false);
-    });
+    console.log("Nemam Amma Bhagavan Sharanam -- status_ids read", status_ids);
+    // db.TweetAction.update (
+    // 		{read: true},
+    // 	 	{where: {
+    // 	 		screen_name: screen_name,
+    // 	 		status_id: 	{
+    // 	 				[Op.or]:  	status_ids
+    // 	 		}	
+    // 	  	}
+    // 	  }
+    // )
+    // .then(() => {
+    // 	res.json(true);
+    // })
+    // .catch(()  => {
+    // 	res.json(false);
+    // })	 
 };
 exports.TweetsController = TweetsController;
 class SearchQuery {

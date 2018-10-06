@@ -93,9 +93,11 @@ import { MarkTweetAsReadDirective }  from "./directives/markTweetAsRead";
 
 		 						<br/>
 		 						<br/>
-
-		 						<send-tweet *ngIf="tweet.show_send_tweet"> </send-tweet>
 		 					</div>
+		 					
+
+		 					<send-tweet class="send-tweet" [tweet]='tweet' [search_query]='search_query' *ngIf="tweet.show_send_tweet"> </send-tweet>
+		 					
 
     	 				</td>
     	 			</tr>
