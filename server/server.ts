@@ -19,16 +19,26 @@ import { TweetTemplatesController }  from "./controllers/tweetTemplatesControlle
 
  		// Req parsing
  		this.app = express();
- 		this.app.use(express.static((path.join(__dirname, '../public/twitteReach/dist'))));         // set the static files location /public/img will be /img for users
+ 	// 	this.app.use(express.static((path.join(__dirname, '../public/twitteReach/dist'))));         // set the static files location /public/img will be /img for users
+		// this.app.use(morgan('dev'));                                         // log every request to the console
+		// this.app.use(bodyParser.json());                                     // parse application/json
+		// this.app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
+
+		// this.app.use(methodOverride());
+		// this.app.use(cookieParser()); 										// read cookies (needed for auth)
+
+		// // Template
+		// this.app.set('views', (path.join(__dirname, '../public/twitteReach/dist')));
+		// this.app.engine('html', require('ejs').renderFile);
+		// this.app.set('view engine', 'html');
+
+		this.app.use(express.static(__dirname + '/../public/twitteReach/dist'));                 // set the static files location /public/img will be /img for users
 		this.app.use(morgan('dev'));                                         // log every request to the console
+		this.app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
 		this.app.use(bodyParser.json());                                     // parse application/json
 		this.app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 
-		this.app.use(methodOverride());
-		this.app.use(cookieParser()); 										// read cookies (needed for auth)
-
-		// Template
-		this.app.set('views', (path.join(__dirname, '../public/twitteReach/dist')));
+		this.app.set('views', __dirname + '/../public/twitteReach/dist/');
 		this.app.engine('html', require('ejs').renderFile);
 		this.app.set('view engine', 'html');
 
