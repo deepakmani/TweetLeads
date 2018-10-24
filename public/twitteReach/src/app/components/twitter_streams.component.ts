@@ -61,7 +61,7 @@ export class TwitterStreamsComponent implements OnInit  {
 	private search_queries:SearchQuery[]         = [];
   private errorMessage:any                     = '';
   private show_add_search_query:boolean        = false;
-  private search_query_by_category:any         = {};
+  public search_query_by_category:any         = {};
   private selected_search_query:SearchQuery    = undefined;
   private show_sub_component                   = "tweets";
   public  objectKeys                           = Object.keys; 

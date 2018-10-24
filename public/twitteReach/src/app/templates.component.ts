@@ -263,4 +263,7 @@ export class TemplatesComponent implements OnInit  {
 
 
     }
+    autoTweet() {
+    	
+    }
 };    	

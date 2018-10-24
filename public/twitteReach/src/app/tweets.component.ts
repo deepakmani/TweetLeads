@@ -223,6 +223,9 @@ export class TweetsComponent implements OnDestroy, OnInit  {
 	    }
 
     }
+    get_tweets(type) {
+    	console.log("Nemam Amma Bhagavan Sharanam");
+    }
     onChange(auto_tweet) {
     	this.show_templates = auto_tweet;
     }
