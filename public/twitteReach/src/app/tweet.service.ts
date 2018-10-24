@@ -36,6 +36,22 @@ export class TweetService {
 	bulkMarkTweetsAsRead = (screen_name: string, status_ids: Array<string>) => {
 		return this.http.post('/api/bulkMarkTweetsAsRead', {screen_name: "DeepakABS", status_ids: status_ids});
 	}
+	sendTweet = (keyword: String, to_name: String, type: String, to_screen_name: String, in_reply_to_status_id: String,
+				 screen_name: String, template_name: String, tweetText: String) => {
+
+	 return this.http.post('/api/sendTweet', {
+	 									keyword: keyword, 
+	 								  	to_name: to_name,
+	 								  	type: 	  type,
+	 								  	to_screen_name: to_screen_name,
+	 								  	in_reply_to_status_id: in_reply_to_status_id,
+	 								  	screen_name: screen_name,
+	 								  	template_name: template_name,
+	 								  	tweetText: 		tweetText,
+
+	 								 });
+
+	}
 
   
   }

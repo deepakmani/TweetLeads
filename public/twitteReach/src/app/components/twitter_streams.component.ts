@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
  
-import { SearchQueryService } from "./searchQuery.service";
-import { SearchQueryDirective } from "./searchQuery.directive";
+import { SearchQueryService } from "../searchQuery.service";
+import { SearchQueryDirective } from "../searchQuery.directive";
 
-import { SearchQuery } from "./SearchQuery";
+import { SearchQuery } from "../SearchQuery";
 import { Observable } from 'rxjs/Observable';
-import { AddedSearchQueryService } from "./AddedSearchQuery.service"
-import { SelectedSearchQueryService } from './SelectedSearchQuery.service'
+import { AddedSearchQueryService } from "../AddedSearchQuery.service"
+import { SelectedSearchQueryService } from '../SelectedSearchQuery.service'
 
 
 
@@ -21,14 +21,14 @@ import { SelectedSearchQueryService } from './SelectedSearchQuery.service'
                   Add New Search Query
               </a>
               <table class="search-query-table" style="width: 100%">
-                <tbody *ngFor="let category of search_query_by_category">
+                <tbody *ngFor="let category of objectKeys(search_query_by_category)">
                    
                      <tr>
-                        <td colspan='2' class="search-query-category"> {{ category.name }} </td>
+                        <td colspan='2' class="search-query-category"> {{ category }} </td>
                      
                     </tr>
 
-                    <tr highlightSearchQuery (click) = "selectSearchQuery(search_query)" [routerLink]="['tweets']"  [queryParams]="{ keyword: search_query.keyword}" class="search-query-keyword"  *ngFor="let search_query of category.search_queries">
+                    <tr highlightSearchQuery (click) = "selectSearchQuery(search_query)" [routerLink]="['tweets']"  [queryParams]="{ keyword: search_query.keyword}" class="search-query-keyword"  *ngFor="let search_query of search_query_by_category[category]">
                       <td>
                         {{ search_query.keyword }}
                       </td>
@@ -61,10 +61,10 @@ export class TwitterStreamsComponent implements OnInit  {
 	private search_queries:SearchQuery[]         = [];
   private errorMessage:any                     = '';
   private show_add_search_query:boolean        = false;
-  private search_query_by_category:any         = [];
+  private search_query_by_category:any         = {};
   private selected_search_query:SearchQuery    = undefined;
   private show_sub_component                   = "tweets";
-
+  public  objectKeys                           = Object.keys; 
  constructor(public SearchQueryService: SearchQueryService, public SelectedSearchQueryService: SelectedSearchQueryService, public AddedSearchQueryService: AddedSearchQueryService) { 
    
 
@@ -84,23 +84,18 @@ export class TwitterStreamsComponent implements OnInit  {
          (added_search_queries) => {
            added_search_queries.forEach((added_search_query, index) => {
      
-         let category_present: boolean = false;
-         this.search_query_by_category.forEach((val, index) => {
-
-           // 2. Check if matches
-           if (val.name == added_search_query.category) {
-             // 3. unshift the search query in search_query_by_category
-             this.search_query_by_category[index].search_queries.unshift(added_search_query);
-             category_present = true;
-           }
-         })
-         // If category is new
-         if (!category_present) {
-           // unshift category and search query
-           this.search_query_by_category.unshift({name:           added_search_query.category, 
-                                                  search_queries: [added_search_query]
-                                                });
-         }
+              // Check if category exists
+              if (this.search_query_by_category[added_search_query.category] == undefined) {
+                // Add category
+                this.search_query_by_category[added_search_query.category] = new Array<SearchQuery>(added_search_query);
+              }
+              else { 
+                // Update array of search_queries
+                let search_queries = this.search_query_by_category[added_search_query.category];
+                search_queries.unshift(added_search_query);
+              
+                this.search_query_by_category[added_search_query.category]  = search_queries;
+              }
        });
     });
   
@@ -109,40 +104,28 @@ export class TwitterStreamsComponent implements OnInit  {
        .subscribe(
                 (search_queries : Array<SearchQuery>) => {
                   this.search_queries = search_queries;
-                  let category_index     = -1;
-                  let prev_search_query_category: string  = undefined;
-
                   this.selected_search_query = search_queries.length > 0 ? search_queries[0] : null;
                   
                   this.SearchQueryService.emit_selected_search_query(this.selected_search_query);
-
                   this.search_queries.forEach((search_query, index) => {
-                    console.log("Nemam Amma Bhagavan Sharanam -- current_category", search_query.category, " prev category", prev_search_query_category, " index", index);
                     if (search_query.category == "") return;
                     if (!search_query.template_names) search_query.template_names = [];
- 
-                    // Move to next category
-                    if ((search_query.category != prev_search_query_category) || index == 0) {
-                    
-                      // Create new array
-                      let search_queries: SearchQuery[] = [];
+                     console.log("Nemam Amma Bhagavan Sharanam -- search_queries", this.search_query_by_category);
+   
+                    // Check if category exists
+                    if (!(search_query.category in this.search_query_by_category)) {
+                      // Add category
+                      console.log("Nemam Amma Bhagavan Sharanam -- new category", search_query.category)
+                      this.search_query_by_category[search_query.category] = new Array<SearchQuery>(search_query);
+                    }
+                    else { 
+                      // Update array of search_queries
+                      let search_queries: Array<SearchQuery> = this.search_query_by_category[search_query.category];
                       search_queries.push(search_query);
-
-                      this.search_query_by_category.push({
-                                name:              search_query.category,
-                                search_queries:    search_queries
-                      });
-                      category_index ++;
+                      this.search_query_by_category[search_query.category]  = search_queries;
                     }
-                    else {
-                      this.search_query_by_category[category_index].search_queries.push(
-                             search_query 
-                      )
-                    }
-                   prev_search_query_category = search_query.category;
 
                 })
-                  console.log("Nemam Amma Bhagavan Sharanam -- search_query by category", this.search_query_by_category);
                 }
                   ,
                 

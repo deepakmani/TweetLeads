@@ -5,10 +5,14 @@ import { FormsModule }   from '@angular/forms';
 
 
 import { AppComponent } from './app.component';
-import { TwitterStreamsComponent } from './twitter_streams.component';
+import { TwitterStreamsComponent } from './components/twitter_streams.component';
 import { AddSearchQueryComponent } from './add_search_query.component';
 import { TweetsComponent } from './tweets.component';
 import { SendTweetComponent } from './components/sendTweet.component';
+import { TweetTemplatesComponent } from './components/TweetTemplates.component';
+import { HomeComponent } from './components/home.component';
+
+import { ChartsModule } from 'ng2-charts';
 
 import { TemplatesComponent } from './templates.component';
 
@@ -20,7 +24,7 @@ import { TweetTemplateService } from './tweetTemplate.service';
 import { SearchQueryDirective } from './searchQuery.directive';
 import { MarkTweetAsReadDirective } from './directives/markTweetAsRead';
 
-
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { RouterModule, Routes } from '@angular/router';
 
 import { UiSwitchModule } from 'ngx-toggle-switch';
@@ -31,6 +35,7 @@ export const appRoutes: Routes = [
     redirectTo: 'twitter_search_streams',
     pathMatch: 'full'
   },
+ 
   {
     path: 'twitter_search_streams',
     component: TwitterStreamsComponent,
@@ -44,7 +49,12 @@ export const appRoutes: Routes = [
                   component: AddSearchQueryComponent
                 }
                ]
-   }
+   },
+   {
+    path: 'home',
+    component: HomeComponent,
+    pathMatch: 'full'
+  },
 ];
 
 
@@ -57,9 +67,13 @@ export const appRoutes: Routes = [
     TweetsComponent,
     TemplatesComponent,
     MarkTweetAsReadDirective,
-    SendTweetComponent
+    SendTweetComponent,
+    TweetTemplatesComponent,
+    HomeComponent,
   ],
   imports: [
+   // MDBBootstrapModule.forRoot(),
+    ChartsModule,
     BrowserModule,
     HttpModule,
     FormsModule,

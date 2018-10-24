@@ -90,7 +90,7 @@ import { ActivatedRoute } from '@angular/router';
 							<button class="mdl-button mdl-button--primary add-search-query-button"> Added </button> 
 						</span>
 						<ng-template #elseAddSearchQuery> 
-							<button class="mdl-button mdl-button--primary add-search-query-button" (click)="add_search_queries(search_query)"> Add Search Query </button> 
+							<button class="mdl-button mdl-button--primary added-search-query-btn" (click)="add_search_queries(search_query)"> Add Search Query </button> 
 						</ng-template>
 					</td>
 				</tr>
@@ -107,9 +107,9 @@ export class AddSearchQueryComponent implements OnInit {
  new_search_queries: 			SearchQuery[] = [];
 
          addSearchQueryForm = new FormGroup ({
-   			                	  keyword: 	new FormControl("Linkedin", Validators.required),
+   			                	  keyword: 	new FormControl("", Validators.required),
    			                	  type: 	new FormControl("Tweets", Validators.required),
-   			                	  category: new FormControl("Default"),
+   			                	  category: new FormControl("Default", Validators.required),
    			                	  locations: new FormControl(),
    			                	  exclude_keywords: new FormControl(),
    			                	  exclude_retweets: new FormControl(),
@@ -142,6 +142,9 @@ export class AddSearchQueryComponent implements OnInit {
  	}
 	generate_search_queries = () => {
 		const formModel = this.addSearchQueryForm.value;
+		
+		// Empty array
+		this.new_search_queries = [];
 
 		// Find keywords 
      	let generated_keywords = new Array();

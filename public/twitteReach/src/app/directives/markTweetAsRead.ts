@@ -10,22 +10,15 @@ export class MarkTweetAsReadDirective {
     constructor(private el: ElementRef,  private renderer: Renderer) {
     }
 
-   @HostListener('mouseover') onMouseOver() {
+   @HostListener('click') onClick() {
 		
    		// 1. Highlight tweet with active color on read
-   		let tweet_body = this.el.nativeElement.parentNode.parentNode;
+   		let tweet_body = this.el.nativeElement.parentNode.parentNode.parentNode.parentNode;
 	    this.renderer.setElementStyle(tweet_body, 'background', '#A252');
 	 	//this.renderer.setElementStyle()	
 	 	// Send output
 	 	this.markTweetAsRead.emit(this.status_id);
 	}
 
-	 @HostListener('mouseoout') onMouseOut() {
-		
-   		// 1. Highlight tweet with active color on read
-   		let tweet_body = this.el.nativeElement.parentNode.parentNod;
-	    this.renderer.setElementStyle(tweet_body, 'background', '#F2F2F2');
-	 
-	}
 
 }

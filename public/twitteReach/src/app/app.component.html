@@ -4,17 +4,21 @@
       <div class="mdl-layout__header-row" id="nav-bar">
 
         <!-- Title -->
-        <span class="mdl-layout-title">TwitteReach</span>
+        <span class="mdl-layout-title">TweetLeads</span>
 
         <!-- Add spacer, to align navigation to the right -->
         <div class="mdl-layout-spacer"></div>
 
         <!-- Navigation with router directives-->
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" [routerLink]="['/']">Home</a>
-          <a class="mdl-navigation__link" [routerLink]="['/twitter_streams']">Twitter Streams</a>
+          <a class="mdl-navigation__link" [routerLink]="['/home']">Home</a>
+          <a class="mdl-navigation__link" [routerLink]="['/twitter_search_streams']">Twitter Streams</a>
+          <a class="mdl-navigation__link" [routerLink]="['/']">Notifications</a>
+          <a  class="mdl-navigation__link" [routerLink]="['/']">
+            <img class="img-responsive" style="height: 50px;width: 50px;border-radius: 50%;"src="{{defaultUser.profile_img_url}}">      {{defaultUser.name}}
+          </a>
+
         </nav>
-        Nemam Amma Bhagavan Sharanam
       </div>
     </header>
   </div>

@@ -1,10 +1,13 @@
-import * as db from '../models/db'
-import * as Twitter from "twitter"
+import * as db 			from '../models/db'
+import * as Twitter 	from "twitter"
+import * as Queue  		 from "bull"
+import { SendTweet }	from "./send_tweet"
 
 export class TwitterStreams {
 	// 1. 
 	static CONSUMER_KEY 	= "0CATYOWT4xuugZNXZ1rDVXwBM";
  	static CONSUMER_SECRET  = "mzG2At2kbbOPwdXRP4dhqZjqolghouVPGWjR6iI3E82HOeTEcg";
+ 	static redis: String 	= process.env.REDIS_URL || "redis://h:p62c73e309976e24e04f61384dcf4d43ef932766db389a8925ed75a0c1ec9d8f7@ec2-18-205-52-161.compute-1.amazonaws.com:27639";
 
 	static 	twitter_clients = {}; 
 	constructor() {
@@ -24,6 +27,7 @@ export class TwitterStreams {
 	      			// Look up search_queries
 	      			// Search Twitter
 	      			// Add tweets
+
 	      			this.find_search_queries(user)
 	      			.then((search_queries) => {
 	      				// For each search query
@@ -34,17 +38,26 @@ export class TwitterStreams {
 
 	      					this.search_twitter(user, search_query)
 	      					.then((tweets: Array<any>) => {
-	      						tweets.forEach((tweet) => {
-	      							console.log("Nemam Amma Bhagavan Sharanam -- tweet", tweet);	
-	      						});
+	      						
 	      						return this.save_tweets(tweets, search_query);
 	      					})
 	      					.then()
-	      					// 2. Add to tweets model, tweetsearchquery model
-	      					// 3. s
-
+	      					
 	      				}); 
 	      			});
+
+	      			// Setup send_tweet queue
+	    //   			if (!("send_tweet_queue" in user)) {
+					// 	// Setup queues
+					// 	user.send_tweet_queue 		= Queue(user.screen_name + "SendTweetQueue",
+					// 								// , conn_info.port
+					// 								// , conn_info.hostname
+					// 								// , {auth_pass: conn_info.auth ? conn_info.auth.replace("h:", "") : ""});
+					// 										this.redis);
+
+					// 	let send_tweet = new SendTweet(user.send_tweet_queue, 1);
+					// }
+					
 	      		})
 	      })
 		}, 5 * 60 * 1000);
@@ -101,28 +114,56 @@ export class TwitterStreams {
 								is_known_source: 		    tweet.source.match(/twitter\.com/) ?  true : false,
 								potential_need_score: 		0
 			} 
-			let potential_need_keywords = [];
+			let potential_need_keywords = {};
+
 		 	let comparison_keywords 	= ["more", "most", "less", "least", "Better", \
-		 							   "Many", "Much", "Difference", "prefer"];    
-        	potential_need_keywords 	= potential_need_keywords.concat(comparison_keywords);
+		 							       "Many", "Much", "Difference", "prefer"];    
+        	potential_need_keywords["comparison_keywords"] = {
+        														keywords: comparison_keywords,
+        														weight:   1	
+        													};
 			// 2. Question
 			// How, Which, What, Is (starting keyword), Does, why, can (starting)
 			let question_keywords 		= ["how", "which", "what", "is", "does", "why", "where", "can", "has"];
-			potential_need_keywords 	= potential_need_keywords.concat(question_keywords);
+			potential_need_keywords["question_keywords"] = {
+															 keywords: question_keywords,
+															 weight:   5
+														   }	
 			
 			// 3. Request
 			// Need, Decide, Decided, recommend, suggest,       
 			let request_keywords   		= ["need", "tried", "suggest", "suggestion", "recommend", "decide", "decided", "find" \
 										   "finding", "advice", "looking", "searching"];
-			potential_need_keywords  	= potential_need_keywords.concat(request_keywords);
+			potential_need_keywords["request_keywords"] = {
+															keywords: request_keywords,
+															weight:    15,
+														  }	
 			// 4. Performance
 			// Good, Great, Easy, Easier, worth, success, working, works, best, bad, tough, terrible, sucks, 
 			let performance_keywords	= ["good", "great", "like", "easy", "easier", "worth", \
 										   "success", "working", "best", "bad", "tough", "terrible", "sucks"];
-			potential_need_keywords  	= potential_need_keywords.concat(performance_keywords);
+			
+			potential_need_keywords["performance_keywords"] = { 
+																	keywords: performance_keywords,
+																	weight:   2
+																  }
             
-            potential_need_keywords.forEach((keyword) => {
-            	tweet_to_save.potential_need_score = tweet.full_text.indexOf(keyword) != -1 ? tweet_to_save.potential_need_score + 1 : tweet_to_save.potential_need_score;
+
+            
+            Object.keys(potential_need_keywords).forEach((category) => {
+            	// 1. Loop through each keyword
+            	potential_need_keywords[category].keywords.forEach((keyword) => {
+            		let keyword_present 			= new RegExp(keyword, "i");
+            		let keyword_present_beginning  	= new RegExp("/^" + keyword + "/", "i");
+
+            		if (tweet_to_save.text.match(keyword_present_beginning))
+            		{
+            			tweet_to_save.potential_need_score = tweet_to_save.potential_need_score + (potential_need_keywords[category].weight * 2);
+            		}
+            		else if (tweet_to_save.text.match(keyword_present)) {
+            			tweet_to_save.potential_need_score = tweet_to_save.potential_need_score + potential_need_keywords[category].weight;
+            		}
+            	});
             });
 
             return tweet_to_save;
@@ -157,11 +198,10 @@ export class TwitterStreams {
 												}
 				return tweet_action_to_save;								
 			});
-			console.log("Nemam Amma Bhagavan Sharanam -- saving tweet actions", tweet_actions_to_save);
-			db.TweetAction.bulkCreate(tweet_actions_to_save)
+			db["TweetAction"].bulkCreate(tweet_actions_to_save)
 			.then((saved_tweet_actions) => {
 				// Update since_id
-				db.SearchQuery.update({since_id: since_id}, {where: {screen_name: search_query.screen_name, keyword: search_query.keyword}});  
+				db["SearchQuery"].update({since_id: since_id}, {where: {screen_name: search_query.screen_name, keyword: search_query.keyword}});  
 		    });      
 		})
 
@@ -170,8 +210,8 @@ export class TwitterStreams {
 
 	public static search_twitter(user, search_query) {
 		return new Promise((resolve, reject) => {
-
-			this.get_twitter_client(user.screen_name, "")
+			// get_twitter_client
+			this.get_twitter_client(user.screen_name)
 			.then(function(twitter_client) {
 				
 				//search_query.exclude_links = true;
@@ -185,7 +225,6 @@ export class TwitterStreams {
 					// var stream = twitter_client.stream('statuses/filter', {track: concated_keywords});
 					// stream.on('data', function(tweet) {
 					//if (twitter_query.match(/premium/)) {
-				console.log("Nemam Amma Bhagavan Sharanam -- calling calling search tweets for ", twitter_query);
 
 				twitter_client.get('search/tweets', {q:twitter_query , count: 100, result_type: "recent", since_id: next_since_id, tweet_mode: 'extended'}, function(error, data, response) {
 				 	if (error) {
@@ -211,15 +250,19 @@ export class TwitterStreams {
 	    });	
 	}
 					
+/*
+@name:  	get_twitter_client
+@params: 	screen_name
+@descr:		Check if twitter_client exists in twitter_clients hash if not create a new one
+*/
 
-public static get_twitter_client(screen_name, concated_keywords) {
+public static get_twitter_client(screen_name) {
 	return new Promise((resolve, reject) => {
 
 		if (this.twitter_clients[screen_name]) resolve(this.twitter_clients[screen_name]);
 
 		else 
 		{
-			console.log("Nemam Amma Bhagavan Sharanam -- setting up new client",);
 			var oauth_credentials = {
 										consumer_key: 			this.CONSUMER_KEY,
 										consumer_secret: 		this.CONSUMER_SECRET,

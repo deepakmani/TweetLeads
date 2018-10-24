@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DefaultUser } from './models/user';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+  public defaultUser = DefaultUser;
+
+  constructor() {}
+
 }

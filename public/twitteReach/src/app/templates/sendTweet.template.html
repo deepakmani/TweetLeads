@@ -1,10 +1,7 @@
-<form [formGroup]="sendTweetForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="sendTweetForm" (ngSubmit)="onSubmit()" class="send-tweet-form">
 	
 		<label>
-			Tweet Type
-			<br/>
-			<br/>
-
+			
 			
 			<input type="radio" formControlName="type" value="Reply">
 			<span> Reply </span>
@@ -16,35 +13,32 @@
   		</label>
   		<br/>
 
-  		<label>To:
-  		<br/>
-  			<span style="color:#2AF"> @{{ tweet.screen_name }} </span>
+  		<label>
+  			To: <span style="color:#2AF"> @{{ tweet.screen_name }} </span>
   		<br/>
 
   		</label>
-  		
+
   		<label> 
   			Tweet 
   			<br/>
-			<textarea  formControlName="tweetText"  name="tweetText" class="mdl-textfield__input tweet-text" type="text" rows="5s" id="sample5"></textarea>
+			<textarea  formControlName="tweetText"  name="tweetText" class="mdl-textfield__input tweet-text-area" type="text" rows="5s" id="sample5"></textarea>
 
 
   		</label>
-  		<label style="float-right"> 
-  			Tweet 
-  			<br/>
-			<textarea  formControlName="tweetText"  name="tweetText" class="mdl-textfield__input tweet-text" type="text" rows="5s" id="sample5"></textarea>
-
-
-  		</label>
-
 
 
   		<br/>
 
-			<button style="float-right" type="submit"  ng-if="!tweet.show_send_tweet" class="mdl-button mdl-button--primary send-tweet-btn"  (click)="tweet.show_send_tweet = true"> 
+			<button class="mdl-button mdl-button--primary send-tweet-btn"  style="float:right" type="submit"> 
 				Send Tweet  
 			</button>
+
+			<button  class="mdl-button mdl-button--primary show-templates-btn"  style="float:right" (click)="show_tweet_templates = true"> 
+		 						Templates 
+		 	</button>
+
+		 	<show-tweet-templates [tweetTemplates]="tweetTemplates" (selectedTweetTemplate)="selectedTweetTemplate($event)" *ngIf="show_tweet_templates"> </show-tweet-templates>
 
 </form>
 

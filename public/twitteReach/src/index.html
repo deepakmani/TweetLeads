@@ -12,6 +12,9 @@
 	<!-- MDL JavaScript library  -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script>
 
+  <script src="../node_modules/chart.js/src/chart.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.bundle.min.js"></script>
+
 	<!-- Material Design Icons  -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <style>
@@ -85,7 +88,7 @@
     .tweet-text-area {
         width: 30%px;
     }
-    .send-tweet {
+    .send-tweet-form {
         margin-left: 15%;
         margin-right: 15%;
     }
@@ -140,6 +143,45 @@
       overflow-y: scroll;
       height: 300px;
     }
+    .show-tweet-templates {
+         top: -300px;
+      position: relative;
+      margin-left: 20px;
+      height: 400px;
+      width: 600px;
+      padding: 20px;
+      background: #FFF;
+      border: 1px solid #555;
+    }
+    .active-tweet-template-category {
+      background: #A37;
+      color:      #FFF;
+    }
+    .deactive-tweet-template-category {
+      background: #FFF;
+      color:      #222;
+    }
+    .select-tweet-templates {
+      cursor:   pointer;
+      border-bottom: 1px solid #555;
+      overflow-y: scroll;
+    }
+    .send-tweet-btn { 
+      background: #A37;
+      color:      #FFF !important;
+     }
+     .show-templates-btn {
+       background: #A72F;
+      color:      #FFF;
+     }
+     .added-search-query-btn {
+       cursor:      none;
+       background:   #3FA;
+       color:       #888;
+     }
+     .add-search-query-btn {
+       cursor:    pointer;
+     }
   </style>
 </head>
 <body>

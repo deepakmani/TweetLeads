@@ -45,8 +45,11 @@ export class SearchQueriesController {
 
 		}
 	
-	/* @Input: screen_name
-	*/	 
+	/* @name:   getSearchQueries
+	   @params: user
+	   @descr:  Select SearchQueries with tweet count
+	*/   			
+		 
 	public static getSearchQueries = function(req, res) {
 		let screen_name = req.query.screen_name;
 		db.sequelize.query("SELECT * \
@@ -59,7 +62,7 @@ export class SearchQueriesController {
 		                            ) as NewTweets Using(keyword)"
 		                    ,	{ type: db.sequelize.QueryTypes.SELECT})
 		.then(search_queries_new_tweets_count => {
-
+				 console.log("Nemam Amma Bhagavan Sharanam -- search_queries", search_queries_new_tweets_count);
 				 res.json(search_queries_new_tweets_count);        
 
 		});
