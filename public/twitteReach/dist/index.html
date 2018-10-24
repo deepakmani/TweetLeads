@@ -1,0 +1,164 @@
+<!doctype html><html lang="en"><head><base href="/"><meta charset="utf-8"><title>TwitteReach</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.css"/><!-- MDL JavaScript library  --><script src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script><script src="../node_modules/chart.js/src/chart.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.bundle.min.js"></script><!-- Material Design Icons  --><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"><style>#nav-bar {
+      background: #423;
+    }
+    .mdl-layout__container {
+      position: relative !important;  
+    /* width: 100%; */
+    /* height: 100%; */
+    }
+
+    .add-search-query-button {
+      width:       50%; 
+      margin-left:  10%;
+      background:   #FAFDAD;
+    }
+    .search-query-keyword {
+        cursor:     pointer;
+
+    }
+    .search-streams {
+      background:#423; 
+      color:#FFF; 
+      margin: 0px;
+      padding-left: 0px;
+      padding-top: 0px;
+    }
+    .active-tweet-type {
+        background: #A252;
+        margin: 0px;
+        padding: 10px;
+        border: 1px solid #423;
+
+    }
+     .inactive-tweet-type {
+        background:#FFF; 
+        color: #888; 
+        margin: 0px;
+        padding: 10px;
+        border: 1px solid #423;
+
+    }
+    .search-query-list table tr {
+      border: 1px solid #FFF;
+
+    }
+    .search-query-list #category {
+      background: #FAFDAD;
+      color:      #999;
+    }
+    .search-query-category {
+      background: #FFF;
+      width: 100%;
+      color: #423;
+      padding: 8px;
+      border-radius: 5%;
+      text-align: center;
+    }
+    .search-query-table {
+      border: 2px solid #423;
+      background: #A252;
+      width: 100%;
+    }
+    .tweets-table {
+       width:   100%;
+    }
+    .tweet-stats {
+        border-bottom: 3px solid #A23A;
+    }
+    .tweet-text-area {
+        width: 30%px;
+    }
+    .send-tweet-form {
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+    .templates {
+      width:    60%;
+      z-index:  9999;
+      position: absolute;
+      bottom:   0px;
+      right:    0px;
+
+      padding: 20px;
+      background: #FFF;
+      border: 1px solid #222;
+
+    }
+    .auto-tweet-btn {
+      font-size:  15px;
+      background: #FFF;
+      border:    2px solid #423;
+      color:     #423;
+    }
+    .close-templates {
+      background: #555;
+      height:     25px;
+      color:      #FFF;
+      top: 0px;
+      position: absolute;
+      margin-left: -20px;
+      padding-right: 20px;
+      width: 100%;
+    }
+    .alert .alert-danger {
+      color: #a94442;
+    }
+    .ng-valid[required], .ng-valid.required  {
+      border-left: 5px solid #42A948; /* green */
+    }
+
+    .ng-invalid:not(form)  {
+      border-left: 5px solid #a94442; /* red */
+    }
+    .selected-tweet-template {
+      background: #A37;
+      color:      #FFF;
+    }
+    .unselected-tweet-template {
+      background: #FFF;
+      color:      #222;
+    }
+    .templates-table {
+      display: block;
+      overflow-y: scroll;
+      height: 300px;
+    }
+    .show-tweet-templates {
+         top: -300px;
+      position: relative;
+      margin-left: 20px;
+      height: 400px;
+      width: 600px;
+      padding: 20px;
+      background: #FFF;
+      border: 1px solid #555;
+    }
+    .active-tweet-template-category {
+      background: #A37;
+      color:      #FFF;
+    }
+    .deactive-tweet-template-category {
+      background: #FFF;
+      color:      #222;
+    }
+    .select-tweet-templates {
+      cursor:   pointer;
+      border-bottom: 1px solid #555;
+      overflow-y: scroll;
+    }
+    .send-tweet-btn { 
+      background: #A37;
+      color:      #FFF !important;
+     }
+     .show-templates-btn {
+       background: #A72F;
+      color:      #FFF;
+     }
+     .added-search-query-btn {
+       cursor:      none;
+       background:   #3FA;
+       color:       #888;
+     }
+     .add-search-query-btn {
+       cursor:    pointer;
+     }</style></head><body><app-root></app-root><script type="text/javascript" src="inline.318b50c57b4eba3d437b.bundle.js"></script><script type="text/javascript" src="polyfills.b6b2cd0d4c472ac3ac12.bundle.js"></script><script type="text/javascript" src="vendor.3a3d41a739d9866dc601.bundle.js"></script><script type="text/javascript" src="main.58445542658e69e6579b.bundle.js"></script></body></html>
