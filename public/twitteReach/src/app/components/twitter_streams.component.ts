@@ -17,8 +17,8 @@ import { SelectedSearchQueryService } from '../SelectedSearchQuery.service'
     	<div class="row">
 				<div class="mdl-grid ">
 					<div class="mdl-cell mdl-cell--3-col">
-              <a  [routerLink]="['new_twitter_stream']" class="mdl-button mdl-button--primary add-search-query-button">
-                  Add New Search Query
+              <a  [routerLink]="['new_twitter_search']" class="mdl-button mdl-button--primary add-search-query-button">
+                   New Twitter Search 
               </a>
               <table class="search-query-table" style="width: 100%">
                 <tbody *ngFor="let category of objectKeys(search_query_by_category)">
@@ -65,6 +65,7 @@ export class TwitterStreamsComponent implements OnInit  {
   private selected_search_query:SearchQuery    = undefined;
   private show_sub_component                   = "tweets";
   public  objectKeys                           = Object.keys; 
+
  constructor(public SearchQueryService: SearchQueryService, public SelectedSearchQueryService: SelectedSearchQueryService, public AddedSearchQueryService: AddedSearchQueryService) { 
    
 
@@ -81,10 +82,9 @@ export class TwitterStreamsComponent implements OnInit  {
  }
   ngOnInit(){
        this.AddedSearchQueryService.added_search_query_observable.subscribe(
-         (added_search_queries) => {
-           added_search_queries.forEach((added_search_query, index) => {
-     
+         (added_search_query) => {
               // Check if category exists
+           if(added_search_query) {
               if (this.search_query_by_category[added_search_query.category] == undefined) {
                 // Add category
                 this.search_query_by_category[added_search_query.category] = new Array<SearchQuery>(added_search_query);
@@ -96,8 +96,8 @@ export class TwitterStreamsComponent implements OnInit  {
               
                 this.search_query_by_category[added_search_query.category]  = search_queries;
               }
+            }
        });
-    });
   
 
        this.SearchQueryService.get_search_queries()

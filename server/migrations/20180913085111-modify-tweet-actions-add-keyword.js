@@ -15,7 +15,7 @@ module.exports = {
      return sequelize.transaction(function (t) {
           return queryInterface.removeColumn('TweetActions', 'type',  {transaction: t})
           .then(function() {
-              return queryInterface.addColumn('Tweets', "actions",  Sequelize.ARRAY(Sequelize.STRING), {transaction: t})
+              return queryInterface.addColumn('Tweet', "actions",  Sequelize.ARRAY(Sequelize.STRING), {transaction: t})
           })
           .then(function() {
               return queryInterface.addColumn('Tweets', "keyword",  Sequelize.STRING, {transaction: t})

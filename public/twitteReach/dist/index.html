@@ -1,4 +1,24 @@
-<!doctype html><html lang="en"><head><base href="/"><meta charset="utf-8"><title>TwitteReach</title><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.css"/><!-- MDL JavaScript library  --><script src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script><script src="../node_modules/chart.js/src/chart.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.bundle.min.js"></script><!-- Material Design Icons  --><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"><style>#nav-bar {
+<!doctype html>
+<html lang="en">
+<head>
+  <base href="/">
+  <meta charset="utf-8">
+  <title>TwitteReach</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.css" />
+
+	<!-- MDL JavaScript library  -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.js"></script>
+
+  <script src="../node_modules/chart.js/src/chart.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.bundle.min.js"></script>
+
+	<!-- Material Design Icons  -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    #nav-bar {
       background: #423;
     }
     .mdl-layout__container {
@@ -38,6 +58,9 @@
         border: 1px solid #423;
 
     }
+    .search-query-list table {
+       border-collapse:collapse
+    }
     .search-query-list table tr {
       border: 1px solid #FFF;
 
@@ -61,6 +84,7 @@
     }
     .tweets-table {
        width:   100%;
+       border-collapse:collapse
     }
     .tweet-stats {
         border-bottom: 3px solid #A23A;
@@ -161,4 +185,10 @@
      }
      .add-search-query-btn {
        cursor:    pointer;
-     }</style></head><body><app-root></app-root><script type="text/javascript" src="inline.318b50c57b4eba3d437b.bundle.js"></script><script type="text/javascript" src="polyfills.b6b2cd0d4c472ac3ac12.bundle.js"></script><script type="text/javascript" src="vendor.3a3d41a739d9866dc601.bundle.js"></script><script type="text/javascript" src="main.58445542658e69e6579b.bundle.js"></script></body></html>
+     }
+  </style>
+</head>
+<body>
+  <app-root></app-root>
+<script type="text/javascript" src="inline.bundle.js"></script><script type="text/javascript" src="polyfills.bundle.js"></script><script type="text/javascript" src="vendor.bundle.js"></script><script type="text/javascript" src="main.bundle.js"></script></body>
+</html>

@@ -37,10 +37,13 @@ module.exports = (sequelize, Sequelize) => {
         category: {
             type: Sequelize.STRING
         },
-        // tweet, reply
-        auto_tweet_type: {
-            type: Sequelize.STRING
+        auto_follow: {
+            type: Sequelize.BOOLEAN
         },
+        search_potential_need_keywords: {
+            type: Sequelize.BOOLEAN
+        },
+        // For DMs
         template_names: {
             type: Sequelize.ARRAY(Sequelize.STRING)
         },

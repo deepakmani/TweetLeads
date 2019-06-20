@@ -1,10 +1,12 @@
 export class Tweet {
 	 constructor(
 	 	public  	screen_name: string,
-   		public	status_id:  	   string,
-   		public	name:  			   string,
-   		public	location:  		   string
+   		public		status_id:   string,
+   		public		name:  	     string,
+   		public		location:    string
    		)
+	 {}
+     
 }
     profile_img_url: {
       type: Sequelize.STRING

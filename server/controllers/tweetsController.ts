@@ -1,8 +1,8 @@
 import * as express 		from "express";
 import * as db 				from "../models/db";
 import * as Queue  		 	from "bull"
-
-
+import * as Twitter 		from "twitter"
+import {TwitterStreams}  	from "../worker/twitter_streams";
 export class TweetsController {
 
 	public static redis: 				String 	= process.env.REDIS_URL || "redis://h:p62c73e309976e24e04f61384dcf4d43ef932766db389a8925ed75a0c1ec9d8f7@ec2-18-205-52-161.compute-1.amazonaws.com:27639";
@@ -19,34 +19,105 @@ export class TweetsController {
 		app.get("/api/getTweetsBySearchQueryAndActionType", this.getTweetsBySearchQueryAndActionType)
 		app.post("/api/bulkMarkTweetsAsRead", this.bulkMarkTweetsAsRead);
 		app.post("/api/sendTweet", this.sendTweet);
+		app.get("/api/search_twitter", this.searchTwitter);
 
 	}
 
+	public static searchTwitter = function(req, res) {
+		// Keyword to search
+		var search_query  =  JSON.parse(req.query.search_query);
+		var screen_name 	= req.query.screen_name;
+		db["User"].find({where: {
+						screen_name: screen_name
+		}})
+		.then((user) => {
+			console.log("ABS -- user", user);
+		// Twitter client
+	 
+			return TwitterStreams.search_twitter(screen_name, search_query);
+		})
+		.then(function(tweets) {
+			let tweets_to_send = [];
+			if (tweets.length > 0) {
+				 tweets_to_send = tweets.map((tweet) => {
+					let tweet_to_send = {
+										status_id: 					tweet.id_str,
+										text: 						tweet.full_text,
+										profile_img_url: 			tweet.user.profile_image_url,
+										name: 						tweet.user.name,
+										screen_name: 				tweet.user.screen_name,
+										location: 					tweet.user.location,
+										//created_at: 		tweet.
+										followers_count: 			tweet.user.followers_count,
+										friends_count: 				tweet.user.friends_count,
+										followers_friends_bucket: 	tweet.user.friends_count != 0 ? Number(TwitterStreams.round((tweet.user.followers_count / tweet.user.friends_count), .25) *  100) : 0,
+										source: 					tweet.source,
+										profile_description: 		tweet.user.description,
+										profile_url: 				tweet.user.url,
+										in_reply_to_status_id_str: 	tweet.in_reply_to_status_id_str,
+										is_retweet: 				tweet.retweeted_status ? true : false,
+										is_reply: 					tweet.in_reply_to_status_id_str ? (tweet.in_reply_to_status_id_str != "null" ? true : false)  : false,
+										has_link: 					tweet.entities.urls.length > 0 ? true : false,
+										is_known_source: 		    tweet.source.match(/twitter\.com/) ?  true : false,
+										potential_need_score: 		0
+					} 
+
+					return tweet_to_send;
+				});
+			}
+
+			res.send(tweets_to_send);
+		})
+
+	}
+	public static search_twitter_promise(twitter_client, search_keyword) {
+
+	return new Promise((resolve, reject) => {
+		twitter_client.get('search/tweets', {q: search_keyword}, function(error, tweets, response) {
+			if (error) {
+				reject(error);
+			}
+			else {
+				resolve(tweets);
+			}
+		});
+	});
+}
 	public static getTweetCountBySearchQuery = function(req, res) {
 		let screen_name = req.query.screen_name;
 		let keyword 	= req.query.keyword;
 		let promises 	= [];
-	 	let actions = ["new", "contacted", "replied", "followed", "favorited", "saved", "read"]
+	 	let actions = ["new", "direct message", "tweet", "replied", "followed", "favorited", "saved", "read"]
 
+	 	let result  = {};
+	   //  db.sequelize.query("SELECT  Count(case \"TweetActions\".read when 'false' then 1 else null end) as \"new_tweet_count\", \
+	   //  							Count(case \"TweetActions\".read when 'true' then 1 else null end) as \"read_tweet_count\" \  FROM \"TweetActions\" \
+				// 					WHERE \"TweetActions\".keyword =\'" + keyword +
+				// 			 		"\' AND \"TweetActions\".screen_name=\'" + screen_name + "\'\
+				// 			 		",
+			 // { type: db.sequelize.QueryTypes.SELECT})
+			db.sequelize.query(
+								"SELECT   action, count(*) FROM \"TweetActions\"  \
+								WHERE \"TweetActions\".keyword =\'" + keyword +
+						 		"\' AND \"TweetActions\".screen_name=\'" + screen_name + "\'\
+						 		GROUP BY action  \
+						 		"
+								,
+								{ type: db.sequelize.QueryTypes.SELECT}) 
+	   .then((data) => {
+	    	let action_counts = data[0];
+	    	console.log("Nemam Amma Bhagavan Sharanam -- counts", data);
+	    	action_counts.forEach((action_count) => {
+	    		if (actions.indexOf(action_count.action.toLowerCase()) != -1)
+	    				result[action_count.action.toLowerCase() + "_tweet_count"] = action_count.tweet_count;
 
-	    db.sequelize.query("SELECT  Count(case \"TweetActions\".read when 'false' then 1 else null end) as \"new_tweet_count\", \
-	    							Count(case \"TweetActions\".read when 'true' then 1 else null end) as \"read_tweet_count\" \  FROM \"TweetActions\" \
-									WHERE \"TweetActions\".keyword =\'" + keyword +
-							 		"\' AND \"TweetActions\".screen_name=\'" + screen_name + "\'\
-							 		",
-			 { type: db.sequelize.QueryTypes.SELECT})
-	    .then((counts) => {
-	    	
-	    	console.log("Nemam Amma Bhagavan Sharanam -- counts", counts[0]);
-	    	
-			res.json({new_tweet_count: counts[0].new_tweet_count,  
-				      // contacted_count: counts.contacted_count, 
-				      // replied_count: replied_count, 
-				      // followed_count: followed_count, 
-				      // saved_count: saved_count, 
-				      read_tweet_count: counts[0].read_tweet_count });
-			    // We don't need spread here, since only the results will be returned for select queries
+	    	})
+			res.json(result);
+						    // We don't need spread here, since only the results will be returned for select queries
 		}, (err) => {
+
+			console.log("Nemam Amma Bhagavan Sharanam -- Error getting counts", err);
+
 			res.json(false);
 		});
 	}
@@ -60,23 +131,21 @@ export class TweetsController {
 
 	public static getTweetsBySearchQueryAndActionType = function(req, res) {
 	      	// Get type 
-	      	let action 			= req.query.action;
+	      	let action 			= req.query.action.toLowerCase() ;
 	      	let keyword		 	= req.query.keyword;
 	      	let screen_name 	= req.query.screen_name;
 
 	      	// If filtering for non-new tweets 
-	      	if (!action.match(/new/i)) {
+	//      	if (!action.match(/new/i)) {
 		  		db.sequelize.query("SELECT * \
 							FROM  \"Tweets\" \
 			  						INNER JOIN \
 			 					 	(	SELECT status_id  \
 			 							FROM \"TweetActions\"  \
-			 							WHERE screen_name = '" + screen_name + " AND ' keyword='" + keyword +  
-			 							 	 "' AND " + action + "'=ANY(actions)'" +	
-		                            ") as \"SelectedTweets\" Using(status_id) " + 
-		                            + "ORDER BY  has_link ASC, is_retweet ASC, " + 
-		                            "potential_need_score DESC,  followers_friends_bucket DESC, " +  
-		                            "is_known_source DESC,  has_description DESC, has_profile_url DESC"
+			 							WHERE screen_name = '" + screen_name + "' AND keyword='" + keyword +  
+			 							 	 "' AND action='" + action + "'" +	
+		                            ") as \"SelectedTweets\" Using(status_id) " 
+		                            + "ORDER BY tweet_score DESC"
 		                    , { type: db.sequelize.QueryTypes.SELECT})
 		  		.then((tweets) => {
 		  			res.json(tweets);
@@ -85,31 +154,32 @@ export class TweetsController {
 		  			res.json([]);
 		  		})
 
-		    }
-		    else {
-		    	console.log("Nemam Amma Bhagavan Sharanam -- Sending tweets");
-		    	db.sequelize.query("SELECT * \
-							       FROM  \"Tweets\" \
-			  						INNER JOIN \
-			 					 	(	SELECT status_id  \
-			 							FROM \"TweetActions\"  \
-			 							WHERE screen_name = '" + screen_name + "' AND keyword='" + keyword +  
-			 							 	 "' AND \"TweetActions\".read='false'" + 	
-		                            ") as \"NewTweets\" Using(status_id) " +
-		                            "ORDER BY  has_link ASC, is_retweet ASC, "   +
-		                            "potential_need_score DESC,  followers_friends_bucket DESC, "  +
-		                            "is_known_source DESC,  has_description DESC, has_profile_url DESC "
-		                    , { type: db.sequelize.QueryTypes.SELECT})
-		  		.then((tweets) => {
-		  			console.log("Nemam Amma Bhagavan Sharanam -- tweets", tweets);
-		  			res.json(tweets);
-		  		})
-		  		.catch((err) => {
-		  			console.log("Nemam Amma Bhagavan Sharanam -- err", err);
-		  			res.json([]);
-		  		})
-		    }
-		}
+		//     }
+		//     else {
+		//     	console.log("Nemam Amma Bhagavan Sharanam -- Sending tweets");
+		//     	db.sequelize.query("SELECT * \
+		// 					       FROM  \"Tweets\" \
+		// 	  						INNER JOIN \
+		// 	 					 	(	SELECT status_id  \
+		// 	 							FROM \"TweetActions\"  \
+		// 	 							WHERE screen_name = '" + screen_name + "' AND keyword='" + keyword +  
+		// 	 							 	 "' AND \"TweetActions\".read='false'" + 	
+		//                             ") as \"NewTweets\" Using(status_id) " +
+		//                             "ORDER BY  has_link ASC, is_retweet ASC, "   +
+		//                             "potential_need_score DESC,  followers_friends_bucket DESC, "  +
+		//                             "is_known_source DESC,  has_description DESC, has_profile_url DESC "
+		//                     , { type: db.sequelize.QueryTypes.SELECT})
+		//   		.then((tweets) => {
+		//   			console.log("Nemam Amma Bhagavan Sharanam -- tweets", tweets);
+		//   			res.json(tweets);
+		//   		})
+		//   		.catch((err) => {
+		//   			console.log("Nemam Amma Bhagavan Sharanam -- err", err);
+		//   			res.json([]);
+		//   		})
+		//     }
+		// }
+	}
 	
 	/*
 	@name:  	bulkMarkTweetsAsRead

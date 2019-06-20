@@ -12,6 +12,7 @@ export class TweetService {
 
   // Get list of search queries for current user
   constructor(private http: Http) {}
+
   getTweetCountBySearchQuery = (keyword) => {
   	 return this.http.get('/api/getTweetCountBySearchQuery', {params: {screen_name: "DeepakABS", keyword: keyword }})
   	.map(response => response.json())
@@ -47,10 +48,19 @@ export class TweetService {
 	 								  	in_reply_to_status_id: in_reply_to_status_id,
 	 								  	screen_name: screen_name,
 	 								  	template_name: template_name,
-	 								  	tweetText: 		tweetText,
-
+	 								  	tweetText: 		tweetText
 	 								 });
 
+	}
+
+	searchTwitter = (search_query: SearchQuery, screen_name: String) => {
+
+		return this.http.get("/api/search_twitter", {params: {
+																search_query: search_query,
+																screen_name:  screen_name
+															}
+													})
+							 .map(response => response.json())
 	}
 
   

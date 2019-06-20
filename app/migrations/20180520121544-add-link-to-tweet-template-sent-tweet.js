@@ -10,7 +10,7 @@ module.exports = {
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
 
-      var sequelize = queryInterface.sequelize;
+     var sequelize = queryInterface.sequelize;
     
      return sequelize.transaction(function (t) {
           return queryInterface.addColumn('tweetTemplates', 'link', Sequelize.STRING, {transaction: t})

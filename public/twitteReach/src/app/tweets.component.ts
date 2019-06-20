@@ -27,11 +27,11 @@ import { MarkTweetAsReadDirective }  from "./directives/markTweetAsRead";
    selector: 'tweets',
    template: `
   		<!-- SearchQueryComponent -->
-  			<!-- <div class="mdl-button mdl-button--primary auto-tweet-btn" (click)="show_templates = true">
-  				Auto Tweet
+  			 <div class="mdl-button mdl-button--primary auto-tweet-btn" (click)="show_templates = true">
+  				Auto Direct Message
   				<br/>
   				<ui-switch disabled [(ngModel)]="enable_auto_tweet" size="small" labelOn="ON" labelOff="OFF"></ui-switch>
-  			</div> -->
+  			</div> 
 			<br/>
 	   	
   		   	<templates [search_query]="search_query" (closeTweetTemplates)="close_templates($event)" *ngIf = "show_templates"> </templates>

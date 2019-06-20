@@ -6,15 +6,14 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       unique: "tweetActionUserIndex"	
     },
-    // Can be tweet_reply, tweet, direct message, follow, favorite, read
-    read: {
-      type:   Sequelize.BOOLEAN,
+    // Can be new, friend, tweet, direct message, replied, followed, favorite, read
+    action: {
+      type:   Sequelize.STRING,
+      primaryKey: true,
+      unique: "tweetActionUserIndex"        
     },
-    contacted_or_replied: {
-      type:   Sequelize.BOOLEAN,
-    },
-    follower_or_friend: {
-      type: Sequelize.BOOLEAN
+    tweet_screen_name: {
+      type:       Sequelize.STRING,
     },
     status_id: {
      type:   			Sequelize.STRING,

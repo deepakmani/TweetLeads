@@ -50,13 +50,10 @@ module.exports = (sequelize, Sequelize) => {
     profile_url: {
       type: Sequelize.STRING
     },
-    source: {
-      type: Sequelize.STRING
-    },
 
       // ASC sort
-    has_link: {
-      type: Sequelize.BOOLEAN
+    source: {
+      type: Sequelize.STRING
     },
     // ASC sort
     is_retweet: {
@@ -66,29 +63,10 @@ module.exports = (sequelize, Sequelize) => {
     is_reply: {
       type: Sequelize.BOOLEAN
     },
-    potential_need_score: {
+    tweet_score: {
       type: Sequelize.INTEGER
     },
     // 1, 2, 3, 4 based on ratio rounded to quartile
-    // DESC sort
-    followers_friends_bucket: {
-      type:  Sequelize.INTEGER,
-    },
-
-    // Known sources: twitter, mobile.twitter, hootsuite
-    // DESC sort
-    is_known_source: {
-      type: Sequelize.BOOLEAN
-    },
-    // DESC Sort 
-    has_description:{
-      type: Sequelize.BOOLEAN
-    },
-    // DESC sort
-    has_profile_url: {
-      type: Sequelize.BOOLEAN
-    },
-    
     
     updatedAt: {
       allowNull: false,

@@ -11,7 +11,7 @@ import {TweetsController} from "./controllers/tweetsController";
 import { TweetTemplatesController }  from "./controllers/tweetTemplatesController";
 
  export class Server {
- 	private port =		process.env.PORT || 5000;
+ 	private port =		process.env.PORT || "9000";
  	private app: 		express.Application;
 
 
@@ -34,7 +34,6 @@ import { TweetTemplatesController }  from "./controllers/tweetTemplatesControlle
 
 		this.app.use(express.static(__dirname + '/../public/twitteReach/dist'));                 // set the static files location /public/img will be /img for users
 		this.app.use(morgan('dev'));                                         // log every request to the console
-		this.app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
 		this.app.use(bodyParser.json());                                     // parse application/json
 		this.app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 
@@ -55,9 +54,9 @@ import { TweetTemplatesController }  from "./controllers/tweetTemplatesControlle
 		TweetTemplatesController.routes(this.app);
 
 
-		this.app.listen(this.port, function () {
+		this.app.listen(this.port, function () { 
 
-		 
+			console.log("Nemam Amma Bhagavan Sharanam -- listening on port", this.port);
 		});
  	}	
 

@@ -8,12 +8,12 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class AddedSearchQueryService {
-	added_search_query_observable = new BehaviorSubject<SearchQuery[]>([]);
+	added_search_query_observable = new BehaviorSubject<SearchQuery>(null);
 
 	constructor() {};
 
-	emit_added_search_query(search_queries: SearchQuery[]) {
-		this.added_search_query_observable.next(search_queries);
+	emit_added_search_query(search_query: SearchQuery) {
+		this.added_search_query_observable.next(search_query);
 	}
 	
 }

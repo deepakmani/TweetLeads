@@ -1,32 +1,36 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require("../models/db");
+const twitter_streams_1 = require("../worker/twitter_streams");
 class SearchQueriesController {
     constructor(app) {
         // Setup routes
     }
 }
 SearchQueriesController.routes = function (app) {
-    app.post("/api/addNewSearchQueries", this.addNewSearchQueries);
+    app.post("/api/saveNewSearchQuery", this.saveNewSearchQuery);
     app.get("/api/getSearchQueries", this.getSearchQueries);
 };
-SearchQueriesController.addNewSearchQueries = function (req, res) {
+SearchQueriesController.saveNewSearchQuery = function (req, res) {
     // 1. Check if user is signed in
     var new_search_queries = Array();
-    // 2. Collect all search query objects
-    req.body.new_search_queries.forEach(new_search_query => {
-        // Temp
-        new_search_query.template_names = [];
-        new_search_query.locations = [];
-        new_search_queries.push(new_search_query);
-    });
-    console.log("Nemam Amma Bhagavan Sharanam", new_search_queries);
+    // 2. 
+    let new_search_query = req.body.new_search_query;
+    // Temp
+    new_search_query.template_names = [];
+    new_search_query.locations = [];
+    new_search_queries.push(new_search_query);
+    console.log("Nemam Amma Bhagavan Sharanam", new_search_query);
     // 3. Insert into db.sequelize 
-    db.SearchQuery.bulkCreate(new_search_queries)
-        .then(added_search_queries => {
-        console.log("Nemam Amma Bhagavan Sharanam -- added", added_search_queries);
-        res.json({ status: true, added_search_queries: added_search_queries });
-    }, err => {
+    db["SearchQuery"].create(new_search_query)
+        .then(added_search_query => {
+        console.log("Nemam Amma Bhagavan Sharanam -- added", added_search_query);
+        twitter_streams_1.TwitterStreams.search_twitter(new_search_query.screen_name, new_search_query)
+            .then((tweets) => {
+            res.json({ status: true, tweets: tweets });
+        });
+    })
+        .catch((err) => {
         console.log("Nemam Amma Bhagavan Sharanam -- error", err);
         res.json({ status: false });
     });
@@ -50,11 +54,10 @@ SearchQueriesController.getSearchQueries = function (req, res) {
 			  						LEFT OUTER JOIN \
 			 					 	(	SELECT keyword, count(status_id) as new_tweets_count  \
 			 							FROM \"TweetActions\"  \
-			 							WHERE screen_name = '" + screen_name + "' AND  read='false' \
+			 							WHERE screen_name = '" + screen_name + "' AND  action='new' \
 			 							GROUP BY \"TweetActions\".keyword \
 		                            ) as NewTweets Using(keyword)", { type: db.sequelize.QueryTypes.SELECT })
         .then(search_queries_new_tweets_count => {
-        console.log("Nemam Amma Bhagavan Sharanam -- search_queries", search_queries_new_tweets_count);
         res.json(search_queries_new_tweets_count);
     });
 }; // getSearchQueries

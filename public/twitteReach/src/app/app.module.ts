@@ -6,7 +6,7 @@ import { FormsModule }   from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { TwitterStreamsComponent } from './components/twitter_streams.component';
-import { AddSearchQueryComponent } from './add_search_query.component';
+import { NewTwitterSearchComponent } from './components/new_twitter_search.component';
 import { TweetsComponent } from './tweets.component';
 import { SendTweetComponent } from './components/sendTweet.component';
 import { TweetTemplatesComponent } from './components/TweetTemplates.component';
@@ -40,13 +40,18 @@ export const appRoutes: Routes = [
     path: 'twitter_search_streams',
     component: TwitterStreamsComponent,
     children: [
+                {
+                  path:     "",
+                  redirectTo: "new_twitter_search",
+                  pathMatch: "full"
+                 },
                 { 
                   path: 'tweets', 
                   component: TweetsComponent,
                 },
                 {
-                  path:     'new_twitter_stream',
-                  component: AddSearchQueryComponent
+                  path:     'new_twitter_search',
+                  component: NewTwitterSearchComponent
                 }
                ]
    },
@@ -62,7 +67,7 @@ export const appRoutes: Routes = [
   declarations: [
     AppComponent,
     TwitterStreamsComponent,
-    AddSearchQueryComponent,
+    NewTwitterSearchComponent,
     SearchQueryDirective,
     TweetsComponent,
     TemplatesComponent,

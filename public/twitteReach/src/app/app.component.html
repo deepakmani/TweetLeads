@@ -11,9 +11,10 @@
 
         <!-- Navigation with router directives-->
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" [routerLink]="['/home']">Home</a>
-          <a class="mdl-navigation__link" [routerLink]="['/twitter_search_streams']">Twitter Streams</a>
-          <a class="mdl-navigation__link" [routerLink]="['/']">Notifications</a>
+          <a style="font-family:Arial" class="mdl-navigation__link" [routerLink]="['/home']"> <i class="fa fa-home"> </i> Home </a>
+          <a style="font-family:Arial"  class="mdl-navigation__link" [routerLink]="['/twitter_search_streams']">
+          <i class="fa fa-twitter"> </i> Twitter Streams </a>
+          <a style="font-family:Arial" class="mdl-navigation__link" [routerLink]="['/']">  <i class="fa fa-bell"> </i>Notifications</a>
           <a  class="mdl-navigation__link" [routerLink]="['/']">
             <img class="img-responsive" style="height: 50px;width: 50px;border-radius: 50%;"src="{{defaultUser.profile_img_url}}">      {{defaultUser.name}}
           </a>

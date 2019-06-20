@@ -1,0 +1,7 @@
+<suite name="TwitterSearchStreams">
+	<test name="search-twitter-basic">
+		<classes>
+			<class name="com.qa.TweetLeads.tests.SearchTwitterFactory"/>
+		</classes>
+	</test>
+</suite>

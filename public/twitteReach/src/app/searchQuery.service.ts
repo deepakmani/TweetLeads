@@ -37,8 +37,8 @@ export class SearchQueryService {
 
 
 	
-  	 add_search_queries(new_search_queries: SearchQuery[]) {
-  		return this.http.post('/api/addNewSearchQueries', {new_search_queries: new_search_queries})
+  	 saveNewSearchQuery = (new_search_query: SearchQuery) => {
+  		return this.http.post('/api/saveNewSearchQuery', {new_search_query: new_search_query})
   		.map(response => response.json())
   	}
 

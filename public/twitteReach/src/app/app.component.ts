@@ -8,7 +8,7 @@ import { DefaultUser } from './models/user';
 })
 export class AppComponent {
   title = 'app';
-  public defaultUser = DefaultUser;
+  defaultUser = DefaultUser;
 
   constructor() {}
 

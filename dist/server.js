@@ -8,7 +8,7 @@ const tweetsController_1 = require("./controllers/tweetsController");
 const tweetTemplatesController_1 = require("./controllers/tweetTemplatesController");
 class Server {
     constructor() {
-        this.port = process.env.PORT || 5000;
+        this.port = process.env.PORT || "9000";
         // Req parsing
         this.app = express();
         // 	this.app.use(express.static((path.join(__dirname, '../public/twitteReach/dist'))));         // set the static files location /public/img will be /img for users
@@ -23,7 +23,6 @@ class Server {
         // this.app.set('view engine', 'html');
         this.app.use(express.static(__dirname + '/../public/twitteReach/dist')); // set the static files location /public/img will be /img for users
         this.app.use(morgan('dev')); // log every request to the console
-        this.app.use(bodyParser.urlencoded({ 'extended': 'true' })); // parse application/x-www-form-urlencoded
         this.app.use(bodyParser.json()); // parse application/json
         this.app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
         this.app.set('views', __dirname + '/../public/twitteReach/dist/');
@@ -38,6 +37,7 @@ class Server {
         tweetsController_1.TweetsController.routes(this.app);
         tweetTemplatesController_1.TweetTemplatesController.routes(this.app);
         this.app.listen(this.port, function () {
+            console.log("Nemam Amma Bhagavan Sharanam -- listening on port", this.port);
         });
     }
 }

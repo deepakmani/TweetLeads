@@ -1,7 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Tweet {
-    constructor() {
+    constructor(screen_name, status_id, name, location) {
+        this.screen_name = screen_name;
+        this.status_id = status_id;
+        this.name = name;
+        this.location = location;
     }
 }
 exports.Tweet = Tweet;
